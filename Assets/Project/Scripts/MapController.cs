@@ -12,11 +12,17 @@ namespace GameControl
 
         public GameObject prefab;
 
-        void Start()
+        public void Init(float y, Vector2[] positions, Vector2 middlePos)
         {
-            var bot1 = Instantiate(prefab);
+            foreach (var position in positions)
+            {
+                var bot = Instantiate(prefab, new Vector3(position.x, y, position.y), Quaternion.identity);
+                bot.transform.LookAt(new Vector3(middlePos.x, y, middlePos.y));
+            }
 
-            var controller = bot1.GetComponent<BotController>();
+            //var bot1 = Instantiate(prefab, new Vector3(500f, y + 0.5f, 500), Quaternion.identity);
+
+            //var controller = bot1.GetComponent<BotController>();
         }
         
         

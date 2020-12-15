@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameControl;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -52,6 +53,8 @@ public class LevelGenerator : MonoBehaviour
 
     [SerializeField] private GameObject navMesh;
 
+    [SerializeField] private GameObject mapController;
+
     void Start()
     {
         if (SceneData.GenerateArena) DisableGeneration = true;
@@ -90,8 +93,8 @@ public class LevelGenerator : MonoBehaviour
 
     private void UpdateNavMesh()
     {
-        var a = navMesh.GetComponent<NavMeshSurface>();
-        a.BuildNavMesh();
+        var navigationMesh = navMesh.GetComponent<NavMeshSurface>();
+        navigationMesh.BuildNavMesh();
     }
 
     public void ApplyRandomSkybox()
@@ -627,11 +630,26 @@ public class LevelGenerator : MonoBehaviour
                 
                     var tileGeneration = tile.AddComponent<Generation>();
 
+                    tile.layer = 1;
+
                     tileGeneration.Init(_generationSynchonizer, maxTileYPosition + 10, arenaBiome);
                 
                     Tiles[tile.transform.position] = tile;
                 }
             }
+
+            var botSpawnPos = new Vector2[4] 
+            { 
+                new Vector2(transform.position.x + _startArenaTileIndex * TileWidth, transform.position.z + _startArenaTileIndex * TileDepth),
+                new Vector2(transform.position.x + (_finishArenaTileIndex - 1) * TileWidth, transform.position.z + _startArenaTileIndex * TileDepth),
+                new Vector2(transform.position.x + _startArenaTileIndex * TileWidth, transform.position.z + (_finishArenaTileIndex - 1) * TileDepth),
+                new Vector2(transform.position.x + (_finishArenaTileIndex - 1) * TileWidth, transform.position.z + (_finishArenaTileIndex - 1) * TileDepth)
+            };
+
+            var ca = botSpawnPos[3] - botSpawnPos[0];
+            var middlePossition = new Vector2(botSpawnPos[3].x - ca.x/2, botSpawnPos[3].y - ca.y/2);
+
+            mapController.GetComponent<MapController>().Init(maxTileYPosition + 10, botSpawnPos, middlePossition);
         }
     }
 }

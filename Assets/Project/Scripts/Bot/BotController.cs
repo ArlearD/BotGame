@@ -11,19 +11,17 @@ namespace Assets.Scripts.Bot
     public class BotController : MonoBehaviour, IBot
     {
         private Camera _mainCamera;
-        public HealthBar healthBar;
         private NavMeshAgent _agent;
         private MethodInfo _playersUpdate;
         private object _pleyerCodeClassObject;
-        public float reloadTime = 1f;
-        public int maxHealth = 100;
-
-        public Collider attackZoneCollider;
-
         private int Health;
         private float Reload;
+        private float Tick;
 
-
+        public HealthBar healthBar;
+        public float reloadTime;
+        public int maxHealth;
+        public GameObject player;
 
         public void SetUserCode(string code)
         {
@@ -104,7 +102,7 @@ public class TestClass
 
     public void TestMethod()
     {
-        _bot.GoToPossition(13,76);
+        _bot.GoToPossition(520,460);
     }
 }";
 
@@ -131,31 +129,21 @@ public class TestClass
         {
             if (Health <= 0) Destroy(gameObject);
 
-            //if (Input.GetMouseButtonDown(0))
+            //Tick += Time.deltaTime;
+            //if (Tick >= 1)
             //{
+            //    Tick = 0;
             //    var _playerCodeValue = _playersUpdate.Invoke(_pleyerCodeClassObject, new object[] { });
             //}
-
 
             if (Input.GetMouseButtonDown(0))
             {
                 RaycastHit hit;
                 if (Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out hit))
                 {
-                    _agent.SetDestination(hit.point);
+                    //_agent.SetDestination(hit.point);
+                    RotateTowards(hit.transform);
                 }
-            }
-
-            int angle = 0;
-
-            if (angle >= 360)
-            {
-                angle = 0;
-            }
-            else
-            {
-                Rotate(angle);
-                angle++;
             }
 
             var botViewDirection = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, gameObject.transform.position.z + 1);
@@ -193,17 +181,12 @@ public class TestClass
 
         }
 
-        //private void OnTriggerEnter(Collider other)
-        //{
-        //    if (gameObject != this && gameObject.tag == "Bot")
-        //        enemysCollider = other;
-        //}
-
-        //private void OnTriggerExit(Collider other)
-        //{
-        //    if (enemysCollider == other)
-        //        enemysCollider = null;
-        //}
+        private void RotateTowards(Transform target)
+        {
+            Vector3 direction = (target.position - transform.position).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10);
+        }
 
         public void Rotate(float angle)
         {
