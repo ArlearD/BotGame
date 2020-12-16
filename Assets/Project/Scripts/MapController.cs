@@ -9,7 +9,7 @@ namespace GameControl
     {
         private List<Vector2> _botPositions;
 
-        private List<GameObject> bots;
+        private static List<GameObject> bots;
 
         public GameObject prefab;
 
@@ -32,19 +32,33 @@ namespace GameControl
             string code = @"
         public void Do()
         {
-            _bot.GoToPossition(30,30);
+            var botPostitions = _map.Vizor();
+            var currentPosition = _bot.GetCurrentPosition();
+            foreach (var position in botPostitions)
+            {
+                if (position.x != currentPosition.x && position.y != currentPosition.y)
+                    {
+                        _bot.GoToPossition(position.x, position.y);
+                    }
+            }
             _bot.Attack();
         }";
 
             InitializeBot(new Vector3(positions[0].x, y, positions[0].y), code);
-            //InitializeBot(new Vector3(490, y, 490));
+            InitializeBot(new Vector3(490, y, 490));
         }
 
         private void InitializeBot(Vector3 position, string code = null)
         {
             var bot = Instantiate(prefab, position, Quaternion.identity);
-            if (!string.IsNullOrEmpty(code))
-                bot.GetComponent<BotController>().SetUserCode(code);
+            try
+            {
+                if (!string.IsNullOrEmpty(code))
+                    bot.GetComponent<BotController>().SetUserCode(code);
+            }
+            catch (System.Exception)
+            {
+            }
 
             bots.Add(bot);
         }
@@ -60,7 +74,7 @@ namespace GameControl
             var positions = new List<Vector2>();
 
             foreach (var bot in bots)
-                positions.Add(new Vector2(bot.transform.position.x, bot.transform.position.z));
+                positions.Add(new Vector2(bot.transform.position.x - 460, bot.transform.position.z - 460));
 
             return positions;
         }

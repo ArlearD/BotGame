@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Interfaces;
+using GameControl;
 using System;
 using System.CodeDom.Compiler;
 using System.Linq;
@@ -21,19 +22,24 @@ namespace Assets.Scripts.Bot
         public HealthBar healthBar;
         public float reloadTime;
         public int maxHealth;
-        public GameObject player;
+
+        public MapController mapController;
 
         public void SetUserCode(string code)
         {
             code = @"
 using Assets.Scripts.Bot;
+using GameControl;
+using UnityEngine;
 public class BotBrain
 {
     private BotController _bot;
+    private MapController _map;
 
-    public BotBrain(BotController bot)
+    public BotBrain(BotController bot, MapController map)
     {
         _bot = bot;
+        _map = map;
     }
 " + code + "}";
 
@@ -44,7 +50,7 @@ public class BotBrain
 
 
             ConstructorInfo[] magicConstructor = magicType.GetConstructors();
-            _pleyerCodeClassObject = magicConstructor[0].Invoke(new object[] { this });
+            _pleyerCodeClassObject = magicConstructor[0].Invoke(new object[] { this, mapController });
 
             _playersUpdate = magicType.GetMethod("Do");
 
@@ -139,6 +145,12 @@ public class BotBrain
                 }
             }
 
+        }
+
+        public Vector2 GetCurrentPosition()
+        {
+            var vector = new Vector2(transform.position.x - 460, transform.position.z - 460);
+            return vector;
         }
 
         public void GoToPossition(float x, float y)

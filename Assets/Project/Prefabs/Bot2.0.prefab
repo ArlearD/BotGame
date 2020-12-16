@@ -207,7 +207,8 @@ MonoBehaviour:
   healthBar: {fileID: 2218253694890009474}
   reloadTime: 1
   maxHealth: 100
-  player: {fileID: 0}
+  mapController: {fileID: 8298255988543994132, guid: 5c1fe0da80be0b24c8c1b8807d1e224f,
+    type: 3}
 --- !u!1 &3787715026141843745
 GameObject:
   m_ObjectHideFlags: 0
