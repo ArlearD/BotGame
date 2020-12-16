@@ -8,8 +8,8 @@ namespace Assets.Scripts.Interfaces
 
         void GoToPossition(float x, float y);
 
-        void Attack(GameObject enemy);
+        void Attack();
 
-        void Rotate(float angle);
+        void Rotate(GameObject target);
     }
 }
