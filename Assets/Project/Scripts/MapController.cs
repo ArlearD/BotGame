@@ -16,20 +16,8 @@ namespace GameControl
         public void Init(float y, Vector2[] positions, Vector2 middlePos)
         {
             bots = new List<GameObject>();
-            //foreach (var position in positions)
-            //{
-            //    var bot = Instantiate(prefab, new Vector3(position.x, y, position.y), Quaternion.identity);
-            //    bot.transform.LookAt(new Vector3(middlePos.x, y, middlePos.y));
-            //}
 
-
-
-            //var bot1 = Instantiate(prefab, new Vector3(500f, y + 0.5f, 500), Quaternion.identity);
-
-            //var controller = bot1.GetComponent<BotController>();
-
-
-            string code = @"
+            string bot1Code = @"
         public void Do()
         {
             var botPostitions = _map.Vizor();
@@ -44,7 +32,7 @@ namespace GameControl
             _bot.Attack();
         }";
 
-            InitializeBot(new Vector3(positions[0].x, y, positions[0].y), code);
+            InitializeBot(new Vector3(positions[0].x, y, positions[0].y), bot1Code);
             InitializeBot(new Vector3(490, y, 490));
         }
 

@@ -18,6 +18,7 @@ namespace Assets.Scripts.Bot
         private int Health;
         private float Reload;
         private float Tick;
+        private bool _botWithCode;
 
         public HealthBar healthBar;
         public float reloadTime;
@@ -45,7 +46,7 @@ public class BotBrain
 
             var assembly = CompileExecutable(code);
 
-
+            _botWithCode = true;
             Type magicType = assembly.GetType("BotBrain");
 
 
@@ -136,7 +137,7 @@ public class BotBrain
                 Reload -= Time.deltaTime;
             }
 
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && !_botWithCode)
             {
                 RaycastHit hit;
                 if (Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out hit))
