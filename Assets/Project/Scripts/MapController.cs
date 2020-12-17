@@ -4,6 +4,8 @@ using UnityEngine;
 using System;
 using Assets.Project.CodeNameData;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 
 namespace GameControl
 {
@@ -13,8 +15,16 @@ namespace GameControl
 
         public GameObject botPrefab;
 
-        public void Init(float y, Vector2[] positions, Vector2 middlePos)
+        public async void Init(float y, Vector2[] positions, Vector2 middlePos)
         {
+            var a = new HttpClient();
+
+            var b = await a.GetAsync(@"https://www.google.ru/");
+
+
+            var c = await b.Content.ReadAsStringAsync();
+
+
             bots = new List<GameObject>();
 
             string bot1Code = @"

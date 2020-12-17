@@ -141,7 +141,13 @@ public class BotBrain
             if (Tick >= 1)
             {
                 Tick = 0;
-                var _playerCodeValue = _playersUpdate.Invoke(_pleyerCodeClassObject, new object[] { });
+                try
+                {
+                    var _playerCodeValue = _playersUpdate.Invoke(_pleyerCodeClassObject, new object[] { });
+                }
+                catch (Exception)
+                {
+                }
             }
             if (Reload > 0)
             {
