@@ -110,7 +110,7 @@ public class BotBrain
             _agent = GetComponent<NavMeshAgent>();
             _agent.acceleration = float.MaxValue;
             _agent.angularSpeed = float.MaxValue;
-            _agent.speed = 30;
+            _agent.speed = 5;
         }
 
         void OnDrawGizmos()
@@ -138,9 +138,9 @@ public class BotBrain
             if (Health <= 0) Destroy(gameObject);
 
             Tick += Time.deltaTime;
-            //if (Tick >= 1)
-            //{
-            //    Tick = 0;
+            if (Tick >= 1/2f)
+            {
+                Tick = 0;
                 try
                 {
                     var _playerCodeValue = _playersUpdate.Invoke(_pleyerCodeClassObject, new object[] { });
@@ -148,7 +148,7 @@ public class BotBrain
                 catch (Exception)
                 {
                 }
-            //}
+            }
             if (Reload > 0)
             {
                 Reload -= Time.deltaTime;

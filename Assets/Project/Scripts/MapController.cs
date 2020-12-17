@@ -52,6 +52,7 @@ namespace GameControl
             //    if (position.x != currentPosition.x && position.y != currentPosition.y)
             //    {
             //        _bot.GoToPosition(position.x - 1, position.y - 1);
+            //        _bot.Rotate(position);
             //        _bot.Attack();
             //    }
             //}
