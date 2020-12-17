@@ -6,10 +6,10 @@ namespace Assets.Scripts.Interfaces
     {
         void TakeDamage(int damage);
 
-        void GoToPossition(float x, float y);
+        void GoToPosition(float x, float y);
 
-        void Attack(GameObject enemy);
+        void Attack();
 
-        void Rotate(float angle);
+        void Rotate(GameObject target);
     }
 }
