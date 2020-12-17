@@ -32,6 +32,7 @@ namespace Assets.Scripts.Bot
             nickName.text = botName;
 
             code = @"
+using System;
 using Assets.Scripts.Bot;
 using GameControl;
 using UnityEngine;
@@ -199,6 +200,13 @@ public class BotBrain
         public void Rotate(GameObject target)
         {
             Vector3 direction = (target.transform.position - transform.position).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+            transform.rotation = lookRotation;
+        }
+
+        public void Rotate(Vector2 target)
+        {
+            Vector3 direction = (new Vector3(target.x + 460, 0, target.y + 460) - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
             transform.rotation = lookRotation;
         }

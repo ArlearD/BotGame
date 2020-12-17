@@ -88,6 +88,7 @@ GameObject:
   - component: {fileID: 6041064588302604791}
   - component: {fileID: 3134277038450657650}
   - component: {fileID: 2510398980381407070}
+  - component: {fileID: 1968532813277643524}
   m_Layer: 0
   m_Name: Bot2.0
   m_TagString: Bot
@@ -210,6 +211,22 @@ MonoBehaviour:
   mapController: {fileID: 8298255988543994132, guid: 5c1fe0da80be0b24c8c1b8807d1e224f,
     type: 3}
   nickName: {fileID: 432087697405459878}
+--- !u!208 &1968532813277643524
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2765103529369201958}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &3787715026141843745
 GameObject:
   m_ObjectHideFlags: 0
@@ -398,7 +415,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31d45b6365a95f94d90371f7374f9699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 426411246510881358, guid: 25d4ef92e15da564d8226bbd792c2497, type: 3}
 --- !u!1 &5044236013292794987
 GameObject:
   m_ObjectHideFlags: 0
