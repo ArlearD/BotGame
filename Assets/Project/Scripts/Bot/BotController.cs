@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 namespace Assets.Scripts.Bot
 {
@@ -23,11 +24,13 @@ namespace Assets.Scripts.Bot
         public HealthBar healthBar;
         public float reloadTime;
         public int maxHealth;
-
         public MapController mapController;
+        public Text nickName;
 
-        public void SetUserCode(string code)
+        public void InitUserBot(string code, string botName)
         {
+            nickName.text = botName;
+
             code = @"
 using Assets.Scripts.Bot;
 using GameControl;
@@ -66,7 +69,7 @@ public class BotBrain
                 {
                     GenerateExecutable = false,
 
-                    OutputAssembly = "Test",
+                    OutputAssembly = "BotBrain",
 
                     GenerateInMemory = true,
 

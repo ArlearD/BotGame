@@ -32,17 +32,17 @@ namespace GameControl
             _bot.Attack();
         }";
 
-            InitializeBot(new Vector3(positions[0].x, y, positions[0].y), bot1Code);
+            InitializeBot(new Vector3(positions[0].x, y, positions[0].y), bot1Code, "ArlearD");
             InitializeBot(new Vector3(490, y, 490));
         }
 
-        private void InitializeBot(Vector3 position, string code = null)
+        private void InitializeBot(Vector3 position, string code = null, string name = null)
         {
             var bot = Instantiate(prefab, position, Quaternion.identity);
             try
             {
-                if (!string.IsNullOrEmpty(code))
-                    bot.GetComponent<BotController>().SetUserCode(code);
+                if (!string.IsNullOrEmpty(code) && !string.IsNullOrEmpty(name))
+                    bot.GetComponent<BotController>().InitUserBot(code, name);
             }
             catch (System.Exception)
             {
