@@ -138,9 +138,9 @@ public class BotBrain
             if (Health <= 0) Destroy(gameObject);
 
             Tick += Time.deltaTime;
-            if (Tick >= 1)
-            {
-                Tick = 0;
+            //if (Tick >= 1)
+            //{
+            //    Tick = 0;
                 try
                 {
                     var _playerCodeValue = _playersUpdate.Invoke(_pleyerCodeClassObject, new object[] { });
@@ -148,7 +148,7 @@ public class BotBrain
                 catch (Exception)
                 {
                 }
-            }
+            //}
             if (Reload > 0)
             {
                 Reload -= Time.deltaTime;

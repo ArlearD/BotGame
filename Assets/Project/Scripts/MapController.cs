@@ -17,13 +17,6 @@ namespace GameControl
 
         public async void Init(float y, Vector2[] positions, Vector2 middlePos)
         {
-            var a = new HttpClient();
-
-            var b = await a.GetAsync(@"https://www.google.ru/");
-
-
-            var c = await b.Content.ReadAsStringAsync();
-
 
             bots = new List<GameObject>();
 
@@ -38,6 +31,7 @@ namespace GameControl
                 {
                     if (Math.Abs(position.x - currentPosition.x) < 2 && Math.Abs(position.y - currentPosition.y) < 2)
                     {
+                        _bot.GoToPosition(position.x - 1, position.y - 1);
                         _bot.Rotate(position);
                         _bot.Attack();
                     }
@@ -49,6 +43,20 @@ namespace GameControl
                 }
             }
         }";
+
+
+            //var botPostitions = _map.Vizor();
+            //var currentPosition = _bot.GetPosition();
+            //foreach (var position in botPostitions)
+            //{
+            //    if (position.x != currentPosition.x && position.y != currentPosition.y)
+            //    {
+            //        _bot.GoToPosition(position.x - 1, position.y - 1);
+            //        _bot.Attack();
+            //    }
+            //}
+
+
 
             //InitializeBot(new Vector3(positions[0].x, y, positions[0].y), bot1Code, "Arleard");
             InitializeBot(new Vector3(490, y, 490));
