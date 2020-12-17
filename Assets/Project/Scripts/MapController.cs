@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Assets.Project.CodeNameData;
+using System.Linq;
 
 namespace GameControl
 {
@@ -19,7 +21,7 @@ namespace GameControl
         public void Do()
         {
             var botPostitions = _map.Vizor();
-            var currentPosition = _bot.GetCurrentPosition();
+            var currentPosition = _bot.GetPosition();
             foreach (var position in botPostitions)
             {
                 if (position.x != currentPosition.x && position.y != currentPosition.y)
@@ -31,15 +33,24 @@ namespace GameControl
                     }
                     else
                     {
-                        _bot.GoToPossition(position.x - 1, position.y - 1);
+                        _bot.GoToPosition(position.x - 1, position.y - 1);
                         _bot.Attack();
                     }
                 }
             }
         }";
 
-            InitializeBot(new Vector3(positions[0].x, y, positions[0].y), bot1Code, "Arleard");
+            //InitializeBot(new Vector3(positions[0].x, y, positions[0].y), bot1Code, "Arleard");
             InitializeBot(new Vector3(490, y, 490));
+
+            if (!string.IsNullOrEmpty(Data.Player1Name))
+                InitializeBot(new Vector3(positions[0].x, y, positions[0].y), Data.Player1Code, Data.Player1Name);
+            if (!string.IsNullOrEmpty(Data.Player2Name))
+                InitializeBot(new Vector3(positions[1].x, y, positions[1].y), Data.Player2Code, Data.Player2Name);
+            if (!string.IsNullOrEmpty(Data.Player3Name))
+                InitializeBot(new Vector3(positions[2].x, y, positions[2].y), Data.Player3Code, Data.Player3Name);
+            if (!string.IsNullOrEmpty(Data.Player4Name))
+                InitializeBot(new Vector3(positions[3].x, y, positions[3].y), Data.Player4Code, Data.Player4Name);
         }
 
         private void InitializeBot(Vector3 position, string code = null, string name = null)
@@ -63,11 +74,12 @@ namespace GameControl
             
         }
 
+        //Возвращает местоположение всех живых ботов на карте
         public List<Vector2> Vizor()
         {
             var positions = new List<Vector2>();
-
-            foreach (var bot in bots)
+            var notNullBots = bots.Where(x => x != null);
+            foreach (var bot in notNullBots)
                 positions.Add(new Vector2(bot.transform.position.x - 460, bot.transform.position.z - 460));
 
             return positions;

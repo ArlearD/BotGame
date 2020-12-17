@@ -126,6 +126,13 @@ public class BotBrain
             Gizmos.DrawSphere(botViewDirection, 0.4f);
         }
 
+        public void Rotate(GameObject target)
+        {
+            Vector3 direction = (target.transform.position - transform.position).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+            transform.rotation = lookRotation;
+        }
+
         void Update()
         {
             if (Health <= 0) Destroy(gameObject);
@@ -152,13 +159,13 @@ public class BotBrain
 
         }
 
-        public Vector2 GetCurrentPosition()
+        public Vector2 GetPosition()
         {
             var vector = new Vector2(transform.position.x - 460, transform.position.z - 460);
             return vector;
         }
 
-        public void GoToPossition(float x, float y)
+        public void GoToPosition(float x, float y)
         {
             if (x < 0 || y < 0 || x > 60 || y > 60) 
                 return;
@@ -197,18 +204,17 @@ public class BotBrain
             }
         }
 
-        public void Rotate(GameObject target)
-        {
-            Vector3 direction = (target.transform.position - transform.position).normalized;
-            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-            transform.rotation = lookRotation;
-        }
-
         public void Rotate(Vector2 target)
         {
             Vector3 direction = (new Vector3(target.x + 460, 0, target.y + 460) - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
             transform.rotation = lookRotation;
         }
+
+        public Vector2 GetRotation()
+        {
+            return new Vector2(transform.rotation.x, transform.rotation.z);
+        }
+
     }
 }

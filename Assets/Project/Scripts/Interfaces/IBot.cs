@@ -6,7 +6,7 @@ namespace Assets.Scripts.Interfaces
     {
         void TakeDamage(int damage);
 
-        void GoToPossition(float x, float y);
+        void GoToPosition(float x, float y);
 
         void Attack();
 
