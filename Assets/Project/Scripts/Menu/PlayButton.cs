@@ -6,7 +6,7 @@ public class PlayButton : MonoBehaviour
     [SerializeField] private GameObject mainMenu;
     [SerializeField] private GameObject gameMenu;
 
-    public void OnClick(InputField field)
+    public void OnClick()
     {
 
         mainMenu.SetActive(false);

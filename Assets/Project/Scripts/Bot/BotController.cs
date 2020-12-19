@@ -46,7 +46,11 @@ public class BotBrain
         _bot = bot;
         _map = map;
     }
-" + code + "}";
+        public void Do()
+        {"
+          + code +
+      @"}
+}";
 
             var assembly = CompileExecutable(code);
 

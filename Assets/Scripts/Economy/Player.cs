@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts.Economy.Data;
 using Economy.Buildings;
 using Economy.Buildings.Base;
 using Economy.Items.Armour.Base;
@@ -10,34 +12,100 @@ using Economy.Items.Weapons.Base;
 using Economy.UI.BuildingList;
 using Economy.UI.Inventory;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace Economy
 {
     public class Player : MonoBehaviour
     {
-        [SerializeField] public Resources resources;
-        [SerializeField] public List<Building> buildings = new List<Building>();
+        [SerializeField] public Resources resources;//
+        [SerializeField] public List<Building> buildings = new List<Building>();//
         [SerializeField] public UiInventory uiInventory;
+        [SerializeField] public Text nameText;
         public BuildingScrollView buildingList;
-        private Inventory inventory;
-        public string name;
+        private Inventory inventory;//
+        public string userName;
         public int workers;
-        public int workersMoney;
-        public Equipment equipment;
+        public int workersMoney;//
+        public Equipment equipment;//
 
         public Effect Effects => equipment.Armour.Effects + equipment.Weapon.Effects + equipment.Boots.Effects;
 
+
+        public void SaveData()
+        {
+            var player = new PlayerDataFieldsInfo(resources, buildings, inventory, workersMoney, equipment);
+
+            switch (PlayersData.CurrentPlayer)
+            {
+                case CurrentPlayerEconomy.Donatello:
+                    PlayersData.Donatello = player;
+                    break;
+                case CurrentPlayerEconomy.Leonardo:
+                    PlayersData.Leonardo = player;
+                    break;
+                case CurrentPlayerEconomy.Michelangelo:
+                    PlayersData.Michelangelo = player;
+                    break;
+                case CurrentPlayerEconomy.Raphael:
+                    PlayersData.Raphael = player;
+                    break;
+            }
+        }
+
+        public void LoadData()
+        {
+            switch (PlayersData.CurrentPlayer)
+            {
+                case CurrentPlayerEconomy.Donatello:
+                    SetValues(PlayersData.Donatello);
+                    break;
+                case CurrentPlayerEconomy.Leonardo:
+                    SetValues(PlayersData.Leonardo);
+                    break;
+                case CurrentPlayerEconomy.Michelangelo:
+                    SetValues(PlayersData.Michelangelo);
+                    break;
+                case CurrentPlayerEconomy.Raphael:
+                    SetValues(PlayersData.Raphael);
+                    break;
+            }
+
+
+            void SetValues(PlayerDataFieldsInfo player)
+            {
+                userName = PlayersData.CurrentPlayer.ToString();
+                if (player != null)
+                {
+                    resources = player.resources;
+                    buildings = player.buildings;
+
+                    foreach (var building in buildings)
+                        buildingList.AddBuilding(building);
+
+                    inventory = player.inventory;
+                    workersMoney = player.workersMoney;
+                    equipment = player.equipment;
+                }
+            }
+        }
+
         private void Start()
         {
-            name = "bogdan";
+            userName = "bogdan";
             resources = new Resources();
             inventory = new Inventory();
             equipment = new Equipment();
             workers = 0;
+
+            LoadData();
+
             uiInventory.SetInventory(inventory);
             uiInventory.gameObject.SetActive(false);
             StartCoroutine(UpdateResources());
+
+            nameText.text = userName;
         }
 
         public void WinBattle()
@@ -112,7 +180,7 @@ namespace Economy
                     if (building.isOn)
                     {
                         var payment = resources.credits < 100 ? resources.credits : 100;
-                        var coeff = payment / (double) 100;
+                        var coeff = payment / (double)100;
 
                         switch (building)
                         {

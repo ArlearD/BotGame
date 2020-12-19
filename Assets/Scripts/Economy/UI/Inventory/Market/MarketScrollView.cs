@@ -33,7 +33,7 @@ namespace Economy.UI.Inventory.Market
             text.text = offer.Item.Type + " x" + offer.Item.Amount + "\nPrice: " + offer.Price;
 
             var buttonText = rectTransform.Find("Button").Find("Text").GetComponent<Text>();
-            buttonText.text = offer.Seller == currentPlayer.name ? "Remove" : "Buy";
+            buttonText.text = offer.Seller == currentPlayer.userName ? "Remove" : "Buy";
 
             var button = rectTransform.Find("Button").GetComponent<RemoveOfferButton>();
             button.Initialize(this, offer.Id);
@@ -46,12 +46,12 @@ namespace Economy.UI.Inventory.Market
 
             if (isPlayerOffers)
             {
-                foreach (var offer in _offers.Where(x => x.Seller == currentPlayer.name))
+                foreach (var offer in _offers.Where(x => x.Seller == currentPlayer.userName))
                     CreateOffer(offer);
             }
             else
             {
-                foreach (var offer in _offers.Where(x => x.Seller != currentPlayer.name))
+                foreach (var offer in _offers.Where(x => x.Seller != currentPlayer.userName))
                     CreateOffer(offer);
             }
         }
@@ -72,7 +72,7 @@ namespace Economy.UI.Inventory.Market
                 item.Type == Item.ItemType.LeatherBoots)
                 if (player.RemoveItem(item))
                 {
-                    _offers.Add(new Offer(item, price, player.name, _offers.Count == 0 ? 1 : _offers.Max(x => x.Id) + 1));
+                    _offers.Add(new Offer(item, price, player.userName, _offers.Count == 0 ? 1 : _offers.Max(x => x.Id) + 1));
                     Refresh();
 
                     return true;
@@ -81,7 +81,7 @@ namespace Economy.UI.Inventory.Market
             else
                 if (player.RemoveResources(item.ToResources()))
                 {
-                    _offers.Add(new Offer(item, price, player.name, _offers.Count == 0 ? 1 : _offers.Max(x => x.Id) + 1));
+                    _offers.Add(new Offer(item, price, player.userName, _offers.Count == 0 ? 1 : _offers.Max(x => x.Id) + 1));
                     Refresh();
 
                     return true;
@@ -95,7 +95,7 @@ namespace Economy.UI.Inventory.Market
             var offer = _offers.FirstOrDefault(x => x.Id == id);
             if (offer == default)
                 throw new Exception("This offer was not found.");
-            if (offer.Seller == player.name)
+            if (offer.Seller == player.userName)
             {
                 if (offer.Item.Type == Item.ItemType.IronArmour ||
                     offer.Item.Type == Item.ItemType.IronSword ||
