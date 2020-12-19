@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class EventHandler : MonoBehaviour
+public class EventIHandler : MonoBehaviour
 {
     [SerializeField] private EventType _eventType;
 

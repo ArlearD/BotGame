@@ -46,7 +46,11 @@ public class BotBrain
         _bot = bot;
         _map = map;
     }
-" + code + "}";
+        public void Do()
+        {"
+          + code +
+      @"}
+}";
 
             var assembly = CompileExecutable(code);
 
@@ -110,7 +114,7 @@ public class BotBrain
             _agent = GetComponent<NavMeshAgent>();
             _agent.acceleration = float.MaxValue;
             _agent.angularSpeed = float.MaxValue;
-            _agent.speed = 30;
+            _agent.speed = 5;
         }
 
         void OnDrawGizmos()
@@ -138,10 +142,16 @@ public class BotBrain
             if (Health <= 0) Destroy(gameObject);
 
             Tick += Time.deltaTime;
-            if (Tick >= 1)
+            if (Tick >= 1/2f)
             {
                 Tick = 0;
-                var _playerCodeValue = _playersUpdate.Invoke(_pleyerCodeClassObject, new object[] { });
+                try
+                {
+                    var _playerCodeValue = _playersUpdate.Invoke(_pleyerCodeClassObject, new object[] { });
+                }
+                catch (Exception)
+                {
+                }
             }
             if (Reload > 0)
             {
