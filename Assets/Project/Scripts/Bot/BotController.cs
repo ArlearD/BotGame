@@ -193,6 +193,20 @@ public class BotBrain
             healthBar.SetHealth(Health);
         }
 
+
+        public void Suicide()
+        {
+            Health =- 100;
+            var enemys = Physics.OverlapSphere(transform.position, 5f)
+                .Where(x => x.gameObject.tag == "Bot" && x.gameObject != gameObject);
+
+            foreach (var enemy in enemys)
+            {
+                enemy.gameObject.GetComponent<BotController>().TakeDamage(100);
+            }
+
+        }
+
         public void Attack()
         {
             var viewAngle = gameObject.transform.rotation.eulerAngles.y * Math.PI / 180;
