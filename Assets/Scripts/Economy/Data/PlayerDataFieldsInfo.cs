@@ -7,6 +7,7 @@ using Resources = Economy.Resources;
 
 namespace Assets.Scripts.Economy.Data
 {
+    [System.Serializable]
     public class PlayerDataFieldsInfo
     {
 

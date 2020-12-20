@@ -1,7 +1,9 @@
 ﻿using Assets.Project.CodeNameData;
 using Assets.Scripts.Bot;
 using Assets.Scripts.Economy.Data;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -38,8 +40,6 @@ namespace GameControl
             var currentPosition = _bot.GetPosition();
             foreach (var position in botPostitions)
             {
-                if (position.x != currentPosition.x && position.y != currentPosition.y)
-                {
                     if (Math.Abs(position.x - currentPosition.x) < 2 && Math.Abs(position.y - currentPosition.y) < 2)
                     {
                         _bot.GoToPosition(position.x - 1, position.y - 1);
@@ -51,24 +51,36 @@ namespace GameControl
                         _bot.GoToPosition(position.x - 1, position.y - 1);
                         _bot.Attack();
                     }
-                }
             }
 ";
-            //var a = _bot.Vizor();
-            //_bot.GoToPosition(a[0].x, a[0].y);
-            //_bot.Attack();
 
-            //var botPostitions = _bot.Vizor();
-            //var currentPosition = _bot.GetPosition();
-            //foreach (var position in botPostitions)
-            //{
-            //    if (position.x != currentPosition.x && position.y != currentPosition.y)
-            //    {
-            //        _bot.GoToPosition(position.x - 1, position.y - 1);
-            //        _bot.Rotate(position);
-            //        _bot.Attack();
-            //    }
-            //}
+            string bot2Code = @"
+            var a = _bot.Vizor();
+            _bot.GoToPosition(a[0].x, a[0].y);
+            _bot.Attack();
+";
+
+            string bot3Code = @"
+            var a = _bot.Vizor();
+            _bot.GoToPosition(a[0].x, a[0].y);
+            var currentPosition = _bot.GetPosition();
+            _bot.Attack();
+            if (Math.Abs(a[0].x - currentPosition.x) < 4 && Math.Abs(a[0].y - currentPosition.y) < 4)
+            {
+                _bot.Suicide();
+            }
+";
+
+            string bot4Code = @"
+            var a = _bot.Vizor();
+            _bot.GoToPosition(a[0].x, a[0].y);
+            var currentPosition = _bot.GetPosition();
+            _bot.Attack();
+            if (Math.Abs(a[0].x - currentPosition.x) < 4 && Math.Abs(a[0].y - currentPosition.y) < 4 && _bot.Health < 60)
+            {
+                _bot.Suicide();
+            }
+";
 
 
 
@@ -122,17 +134,37 @@ namespace GameControl
                 {
                     GameIsStopped = true;
                     var botControllers = bots.Select(x => x.GetComponent<BotController>());
-                    foreach (var botController in botControllers)
+                    using (StreamWriter sw = new StreamWriter(Directory.GetCurrentDirectory() + @"\gameResults.json", true))
                     {
-                        if (botController.IsDead)
+                        foreach (var botController in botControllers)
                         {
-                            botController.playerDataFields.LoseBattle();
-                        }
-                        else
-                        {
-                            botController.playerDataFields.WinBattle();
+                            if (botController.IsDead)
+                            {
+                                sw.WriteLine(JsonUtility.ToJson(new GameResult(
+                                    botController.Code,
+                                    "0",
+                                    botController.IHaveArmor ? "1" : "0",
+                                    botController.IHaveWeapon ? "1" : "0",
+                                    botController.IHaveBoots ? "1" : "0")
+                                    ));
+                                botController.playerDataFields.LoseBattle();
+                            }
+                            else
+                            {
+                                sw.WriteLine(JsonUtility.ToJson(new GameResult(
+                                    botController.Code,
+                                    "1",
+                                    botController.IHaveArmor ? "1" : "0",
+                                    botController.IHaveWeapon ? "1" : "0",
+                                    botController.IHaveBoots ? "1" : "0")
+                                    ));
+                                botController.playerDataFields.WinBattle();
+                            }
+
+
                         }
                     }
+
 
                     Cursor.lockState = CursorLockMode.None;
                     Cursor.visible = true;
@@ -146,12 +178,31 @@ namespace GameControl
         {
             var positions = new List<Vector2>();
             var notDeadBots = bots
-                .Where(x => !x.GetComponent<BotController>().IsDead 
+                .Where(x => !x.GetComponent<BotController>().IsDead
                 && x.GetComponent<BotController>().nickName.text != watcherName);
             foreach (var bot in notDeadBots)
                 positions.Add(new Vector2(bot.transform.position.x - 460, bot.transform.position.z - 460));
 
             return positions;
+        }
+    }
+
+    [Serializable]
+    public class GameResult
+    {
+        public string code;
+        public string IsWinner;
+        public string HaveArmor;
+        public string HaveWeapon;
+        public string HaveBoots;
+
+        public GameResult(string code, string isWinner, string haveArmor, string haveWeapon, string haveBoots)
+        {
+            this.code = code;
+            IsWinner = isWinner;
+            HaveArmor = haveArmor;
+            HaveWeapon = haveWeapon;
+            HaveBoots = haveBoots;
         }
     }
 }

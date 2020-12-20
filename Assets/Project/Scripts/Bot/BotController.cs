@@ -18,14 +18,14 @@ namespace Assets.Scripts.Bot
         private NavMeshAgent _agent;
         private MethodInfo _playersUpdate;
         private object _pleyerCodeClassObject;
-        private int Health;
+        public int Health { get; private set; }
         private float Reload;
         private float Tick;
         private bool _botWithCode;
 
-        private bool IHaveArmor;
-        private bool IHaveWeapon;
-        private bool IHaveBoots;
+        public bool IHaveArmor;
+        public bool IHaveWeapon;
+        public bool IHaveBoots;
 
         public PlayerDataFieldsInfo playerDataFields;
         public HealthBar healthBar;
@@ -34,11 +34,13 @@ namespace Assets.Scripts.Bot
         public Text nickName;
         public bool IsDead;
         public int Damage;
+        public string Code;
 
 
 
         public void InitUserBot(string code, string botName, PlayerDataFieldsInfo playerDataFields)
         {
+            Code = code;
             this.playerDataFields = playerDataFields;
             nickName.text = botName;
 
@@ -81,7 +83,6 @@ public class BotBrain
             _botWithCode = true;
             Type magicType = assembly.GetType("BotBrain");
 
-
             ConstructorInfo[] magicConstructor = magicType.GetConstructors();
             _pleyerCodeClassObject = magicConstructor[0].Invoke(new object[] { this });
 
@@ -98,7 +99,7 @@ public class BotBrain
                 {
                     GenerateExecutable = false,
 
-                    OutputAssembly = "BotBrain",
+                    OutputAssembly = botName + DateTime.Now.Ticks.ToString(),
 
                     GenerateInMemory = true,
 
@@ -173,9 +174,9 @@ public class BotBrain
                 }
 
                 Tick += Time.deltaTime;
-                if (Tick >= 1 / 2f)
-                {
-                    Tick = 0;
+                //if (Tick >= 1 / 2f)
+                //{
+                //    Tick = 0;
                     try
                     {
                         var _playerCodeValue = _playersUpdate.Invoke(_pleyerCodeClassObject, new object[] { });
@@ -183,7 +184,7 @@ public class BotBrain
                     catch (Exception)
                     {
                     }
-                }
+                //}
                 if (Reload > 0)
                 {
                     Reload -= Time.deltaTime;
@@ -217,6 +218,8 @@ public class BotBrain
         /// <param name="y">Координата y</param>
         public void GoToPosition(float x, float y)
         {
+            if (Health <= 0) return;
+
             if (x < 0 || y < 0 || x > 60 || y > 60)
                 return;
 
@@ -250,7 +253,7 @@ public class BotBrain
                 enemy.gameObject.GetComponent<BotController>().TakeDamage(Health);
             }
 
-            Health = -Health;
+            TakeDamage(Health);
         }
 
         /// <summary>

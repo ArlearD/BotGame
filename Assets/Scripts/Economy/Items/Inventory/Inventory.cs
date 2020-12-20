@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Economy.Items.Inventory
 {
+    [Serializable]
     public class Inventory
     {
         public event EventHandler OnItemListChanged;
