@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Economy.Data;
 using Economy.Items.Inventory;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,16 +13,11 @@ namespace Economy.UI.Inventory.Market
         public GameObject template;
         [SerializeField]
         private Player currentPlayer;
-        private readonly List<Offer> _offers = new List<Offer>();
         [SerializeField]
         private Scrollbar scrollbar;
         public bool isPlayerOffers = false;
 
         private void Start () {
-            _offers.Add(new Offer(new Item(Item.ItemType.Oil, 200), 200, "vitaliy", 1));
-            _offers.Add(new Offer(new Item(Item.ItemType.Ore, 500), 1000, "mohajjid", 2));
-            _offers.Add(new Offer(new Item(Item.ItemType.Wood, 3000), 2000, "maxim", 3));
-
             template.SetActive(false);
         }
 
@@ -33,7 +29,7 @@ namespace Economy.UI.Inventory.Market
             text.text = offer.Item.Type + " x" + offer.Item.Amount + "\nPrice: " + offer.Price;
 
             var buttonText = rectTransform.Find("Button").Find("Text").GetComponent<Text>();
-            buttonText.text = offer.Seller == currentPlayer.userName ? "Remove" : "Buy";
+            buttonText.text = offer.Seller == PlayersData.CurrentPlayer ? "Remove" : "Buy";
 
             var button = rectTransform.Find("Button").GetComponent<RemoveOfferButton>();
             button.Initialize(this, offer.Id);
@@ -46,12 +42,12 @@ namespace Economy.UI.Inventory.Market
 
             if (isPlayerOffers)
             {
-                foreach (var offer in _offers.Where(x => x.Seller == currentPlayer.userName))
+                foreach (var offer in MarketData.Offers.Where(x => x.Seller == PlayersData.CurrentPlayer))
                     CreateOffer(offer);
             }
             else
             {
-                foreach (var offer in _offers.Where(x => x.Seller != currentPlayer.userName))
+                foreach (var offer in MarketData.Offers.Where(x => x.Seller != PlayersData.CurrentPlayer))
                     CreateOffer(offer);
             }
         }
@@ -72,7 +68,7 @@ namespace Economy.UI.Inventory.Market
                 item.Type == Item.ItemType.LeatherBoots)
                 if (player.RemoveItem(item))
                 {
-                    _offers.Add(new Offer(item, price, player.userName, _offers.Count == 0 ? 1 : _offers.Max(x => x.Id) + 1));
+                    MarketData.Offers.Add(new Offer(item, price, PlayersData.CurrentPlayer, MarketData.Offers.Count == 0 ? 1 : MarketData.Offers.Max(x => x.Id) + 1));
                     Refresh();
 
                     return true;
@@ -81,7 +77,7 @@ namespace Economy.UI.Inventory.Market
             else
                 if (player.RemoveResources(item.ToResources()))
                 {
-                    _offers.Add(new Offer(item, price, player.userName, _offers.Count == 0 ? 1 : _offers.Max(x => x.Id) + 1));
+                    MarketData.Offers.Add(new Offer(item, price, PlayersData.CurrentPlayer, MarketData.Offers.Count == 0 ? 1 : MarketData.Offers.Max(x => x.Id) + 1));
                     Refresh();
 
                     return true;
@@ -92,10 +88,10 @@ namespace Economy.UI.Inventory.Market
 
         public void RemoveOffer(int id, Player player)
         {
-            var offer = _offers.FirstOrDefault(x => x.Id == id);
+            var offer = MarketData.Offers.FirstOrDefault(x => x.Id == id);
             if (offer == default)
                 throw new Exception("This offer was not found.");
-            if (offer.Seller == player.userName)
+            if (offer.Seller == PlayersData.CurrentPlayer)
             {
                 if (offer.Item.Type == Item.ItemType.IronArmour ||
                     offer.Item.Type == Item.ItemType.IronSword ||
@@ -103,7 +99,7 @@ namespace Economy.UI.Inventory.Market
                     player.AddItems(offer.Item);
                 else
                     player.AddResources(offer.Item.ToResources());
-                _offers.Remove(offer);
+                MarketData.Offers.Remove(offer);
                 Refresh();
             }
             else if (player.RemoveResources(new Resources(offer.Price)))
@@ -114,24 +110,24 @@ namespace Economy.UI.Inventory.Market
                     player.AddItems(offer.Item);
                 else
                     player.AddResources(offer.Item.ToResources());
-                _offers.Remove(offer);
+
+                switch (offer.Seller)
+                {
+                    case EconomyPlayerType.Leonardo:
+                        PlayersData.Leonardo.Resources.credits += offer.Price;
+                        break;
+                    case EconomyPlayerType.Raphael:
+                        PlayersData.Raphael.Resources.credits += offer.Price;
+                        break;
+                    case EconomyPlayerType.Donatello:
+                        PlayersData.Donatello.Resources.credits += offer.Price;
+                        break;
+                    case EconomyPlayerType.Michelangelo:
+                        PlayersData.Michelangelo.Resources.credits += offer.Price;
+                        break;
+                }
+                MarketData.Offers.Remove(offer);
                 Refresh();
-            }
-        }
-
-        private class Offer
-        {
-            public Item Item;
-            public int Price;
-            public string Seller;
-            public int Id;
-
-            public Offer(Item item, int price, string seller, int id)
-            {
-                Item = item;
-                Price = price;
-                Seller = seller;
-                Id = id;
             }
         }
     }

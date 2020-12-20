@@ -17,10 +17,16 @@ namespace Economy.UI.Equipment.Slots
             thisButton.onClick.AddListener(Select);
         }
 
-        public void Equip(IArmour armour)
+        public void SetItem(IArmour armour)
         {
             _armour = armour;
-            thisButton.transform.Find("Text").GetComponent<Text>().text = armour.ItemType.ToString();
+            thisButton.transform.Find("Text").GetComponent<Text>().text = armour == null ? "Nothing" : armour.ItemType.ToString();
+        }
+
+
+        public void Equip(IArmour armour)
+        {
+            SetItem(armour);
             player.EquipArmour(armour);
         }
 

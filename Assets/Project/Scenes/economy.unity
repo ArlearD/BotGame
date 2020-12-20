@@ -6888,6 +6888,9 @@ MonoBehaviour:
     goods: 0
   uiInventory: {fileID: 1129980575}
   nameText: {fileID: 1745029429}
+  armourSlot: {fileID: 18976147}
+  weaponSlot: {fileID: 1341562819}
+  bootsSlot: {fileID: 699346645}
   buildingList: {fileID: 2110519990}
   userName: 
   workers: 0

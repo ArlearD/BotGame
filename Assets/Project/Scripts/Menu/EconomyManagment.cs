@@ -6,25 +6,25 @@ public class EconomyManagment : MonoBehaviour
 {
     public void OnLeonardoManagment()
     {
-        PlayersData.CurrentPlayer = CurrentPlayerEconomy.Leonardo;
+        PlayersData.CurrentPlayer = EconomyPlayerType.Leonardo;
         SceneManager.LoadScene(2);
     }
 
     public void OnRaphaelManagment()
     {
-        PlayersData.CurrentPlayer = CurrentPlayerEconomy.Raphael;
+        PlayersData.CurrentPlayer = EconomyPlayerType.Raphael;
         SceneManager.LoadScene(2);
     }
 
     public void OnDonatelloManagment()
     {
-        PlayersData.CurrentPlayer = CurrentPlayerEconomy.Donatello;
+        PlayersData.CurrentPlayer = EconomyPlayerType.Donatello;
         SceneManager.LoadScene(2);
     }
 
     public void OnMichelangeloManagment()
     {
-        PlayersData.CurrentPlayer = CurrentPlayerEconomy.Michelangelo;
+        PlayersData.CurrentPlayer = EconomyPlayerType.Michelangelo;
         SceneManager.LoadScene(2);
     }
 }

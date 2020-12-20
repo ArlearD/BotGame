@@ -1,6 +1,6 @@
 ﻿namespace Assets.Scripts.Economy.Data
 {
-    public enum CurrentPlayerEconomy
+    public enum EconomyPlayerType
     {
         Leonardo,
         Raphael,
