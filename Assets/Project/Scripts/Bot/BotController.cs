@@ -167,18 +167,6 @@ public class BotBrain
 
         void Update()
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                RaycastHit hit;
-                if (Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out hit))
-                {
-                    _agent.SetDestination(hit.point);
-                }
-            }
-            if (Input.GetMouseButtonDown(1))
-            {
-                Attack();
-            }
             if (!IsDead && !mapController.GameIsStopped)
             {
                 if (Health <= 0)

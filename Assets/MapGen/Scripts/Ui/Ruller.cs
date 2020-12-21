@@ -17,7 +17,7 @@ public class Ruller : MonoBehaviour
 
     void Start()
     {
-        TimeUntilRain = Random.Range(600f, 1200f); //Время до первого дождя (сек)
+        TimeUntilRain = Random.Range(0, 1200f); //Время до первого дождя (сек)
         StarSpawn();
     }
 

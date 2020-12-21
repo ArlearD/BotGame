@@ -29,7 +29,7 @@ public class GenerationSynchonizer : MonoBehaviour
 
         if (biomes == null || biomes.Length == 0)
         {
-            var biomesCount = Random.Range(4, 10);
+            var biomesCount = Random.Range(15, 50);
             var frequency = 1f / biomesCount;
             Biomes = new Biome[biomesCount];
 

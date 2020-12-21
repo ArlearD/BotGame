@@ -17,6 +17,9 @@ namespace GameControl
 
         public GameObject botPrefab;
 
+        [SerializeField]
+        private GameObject Player;
+
         private float Tick;
         private float Tick2;
 
@@ -30,6 +33,7 @@ namespace GameControl
 
         public async void Init(float y, Vector2[] positions, Vector2 middlePos)
         {
+            Player.transform.position = new Vector3(middlePos.x, y + 10, middlePos.y);
             Tick = 0f;
             timeOutInfo.enabled = false;
 

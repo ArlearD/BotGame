@@ -73,7 +73,7 @@ public class LevelGenerator : MonoBehaviour
 
         var ruller = TimeController.GetComponent<Ruller>();
         ruller.K = Random.Range(0, 1);
-        ruller.StartTime = Random.Range(20000, 30000);
+        ruller.StartTime = Random.Range(20000, 40000);
 
         _generationSynchonizer = TerrainTypesBuilder.AddComponent<GenerationSynchonizer>();
         _generationSynchonizer.Init(PrefabObjects, Biomes, MapWidthInTiles, MapDepthInTiles, Event);
