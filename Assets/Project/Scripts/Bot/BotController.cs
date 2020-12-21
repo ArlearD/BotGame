@@ -27,6 +27,8 @@ namespace Assets.Scripts.Bot
         public bool IHaveWeapon;
         public bool IHaveBoots;
 
+        public Animation Animation;
+
         public PlayerDataFieldsInfo playerDataFields;
         public HealthBar healthBar;
         public float reloadTime;
@@ -165,11 +167,26 @@ public class BotBrain
 
         void Update()
         {
+            if (Input.GetMouseButtonDown(0))
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out hit))
+                {
+                    _agent.SetDestination(hit.point);
+                }
+            }
+            if (Input.GetMouseButtonDown(1))
+            {
+                Attack();
+            }
             if (!IsDead && !mapController.GameIsStopped)
             {
                 if (Health <= 0)
                 {
                     IsDead = true;
+                    gameObject.GetComponent<Collider>().enabled = false;
+                    gameObject.GetComponent<NavMeshAgent>().enabled = false;
+                    Animation.Play("Death");
                     enabled = false;
                 }
 
@@ -276,6 +293,7 @@ public class BotBrain
             if (enemy != null && Reload <= 0)
             {
                 enemy.GetComponent<BotController>().TakeDamage(Damage);
+                Animation.Play("Attack");
                 Reload = reloadTime;
             }
         }
