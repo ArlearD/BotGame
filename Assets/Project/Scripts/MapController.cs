@@ -52,7 +52,7 @@ namespace GameControl
                     }
                     else
                     {
-                        _bot.GoToPosition(position.x - 1, position.y - 1);
+                        _bot.GoToPosition(position.x, position.y);
                         _bot.Attack();
                     }
             }
@@ -83,6 +83,50 @@ namespace GameControl
             if (Math.Abs(a[0].x - currentPosition.x) < 4 && Math.Abs(a[0].y - currentPosition.y) < 4 && _bot.Health < 60)
             {
                 _bot.Suicide();
+            }
+";
+
+            string bot5Code = @"
+            var botPostitions = _bot.Vizor();
+            var currentPosition = _bot.GetPosition();
+            if (botPostitions.Count > 1)
+            {
+            var isClose = false;
+            foreach (var position in botPostitions)
+            {
+                    if (Math.Abs(position.x - currentPosition.x) < 8 && Math.Abs(position.y - currentPosition.y) < 8)
+                    {
+                        isClose = true;
+                    }
+                    else isClose = false;
+            }
+            float xDir = 0;
+            float yDir = 0;
+            if (isClose && Math.Abs(currentPosition.x) < 4) 
+                xDir = currentPosition.x + 2;
+                else xDir = currentPosition.x + 2;
+            
+            if (isClose && Math.Abs(currentPosition.y) < 4) 
+                yDir = currentPosition.y + 2;
+                else yDir = currentPosition.y + 2;
+
+
+            _bot.GoToPosition(xDir, yDir);
+            }
+            else
+            foreach (var position in botPostitions)
+            {
+                    if (Math.Abs(position.x - currentPosition.x) < 2 && Math.Abs(position.y - currentPosition.y) < 2)
+                    {
+                        _bot.GoToPosition(position.x - 1, position.y - 1);
+                        _bot.Rotate(position);
+                        _bot.Attack();
+                    }
+                    else
+                    {
+                        _bot.GoToPosition(position.x, position.y);
+                        _bot.Attack();
+                    }
             }
 ";
 
@@ -129,7 +173,7 @@ namespace GameControl
 
             timeInfo.text = Tick.ToString();
 
-            if (Tick > 60 || bots.Where(x => !x.GetComponent<BotController>().IsDead).Count() == 1)
+            if (Tick > 60 || bots.Where(x => !x.GetComponent<BotController>().IsDead)?.Count() <= 1)
             {
                 Tick2 += Time.deltaTime;
                 GameIsStopped = true;

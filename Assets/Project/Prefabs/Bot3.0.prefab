@@ -947,6 +947,7 @@ MonoBehaviour:
   IHaveWeapon: 0
   IHaveBoots: 0
   Animation: {fileID: 3508070134953226124}
+  Exploson: {fileID: 100012, guid: 5f5e08f64c8423c46ae4bd7e46588425, type: 3}
   healthBar: {fileID: 592335271734550826}
   reloadTime: 1
   mapController: {fileID: 8298255988543994132, guid: 5c1fe0da80be0b24c8c1b8807d1e224f,

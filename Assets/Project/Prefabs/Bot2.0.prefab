@@ -205,12 +205,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db653305a1a6f694e9fdb470a29395a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IHaveArmor: 0
+  IHaveWeapon: 0
+  IHaveBoots: 0
+  Animation: {fileID: 0}
+  Exploson: {fileID: 100012, guid: 5f5e08f64c8423c46ae4bd7e46588425, type: 3}
   healthBar: {fileID: 2218253694890009474}
   reloadTime: 1
-  maxHealth: 100
   mapController: {fileID: 8298255988543994132, guid: 5c1fe0da80be0b24c8c1b8807d1e224f,
     type: 3}
   nickName: {fileID: 432087697405459878}
+  IsDead: 0
+  Damage: 0
+  Code: 
 --- !u!208 &1968532813277643524
 NavMeshObstacle:
   m_ObjectHideFlags: 0

@@ -4,6 +4,7 @@ using GameControl;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -22,12 +23,14 @@ namespace Assets.Scripts.Bot
         private float Reload;
         private float Tick;
         private bool _botWithCode;
+        private string asemblyName;
 
         public bool IHaveArmor;
         public bool IHaveWeapon;
         public bool IHaveBoots;
 
         public Animation Animation;
+        public GameObject Exploson;
 
         public PlayerDataFieldsInfo playerDataFields;
         public HealthBar healthBar;
@@ -93,6 +96,7 @@ public class BotBrain
 
             Assembly CompileExecutable(string codes)
             {
+                asemblyName = botName + DateTime.Now.Ticks.ToString();
 
                 CodeDomProvider provider = new Microsoft.CSharp.CSharpCodeProvider(new System.Collections.Generic.Dictionary<string, string>()
         { { "CompilerVersion", "v4.8" } });
@@ -101,7 +105,7 @@ public class BotBrain
                 {
                     GenerateExecutable = false,
 
-                    OutputAssembly = botName + DateTime.Now.Ticks.ToString(),
+                    OutputAssembly = asemblyName,
 
                     GenerateInMemory = true,
 
@@ -145,6 +149,11 @@ public class BotBrain
             _agent.speed = IHaveBoots? 10: 5;
         }
 
+        private void OnDestroy()
+        {
+            File.Delete(Directory.GetCurrentDirectory() + @"\" + asemblyName);
+        }
+
         void OnDrawGizmos()
         {
             var angle = gameObject.transform.rotation.eulerAngles.y * Math.PI / 180;
@@ -179,9 +188,9 @@ public class BotBrain
                 }
 
                 Tick += Time.deltaTime;
-                //if (Tick >= 1 / 2f)
-                //{
-                //    Tick = 0;
+                if (Tick >= 1 / 2f)
+                {
+                    Tick = 0;
                     try
                     {
                         var _playerCodeValue = _playersUpdate.Invoke(_pleyerCodeClassObject, new object[] { });
@@ -189,20 +198,20 @@ public class BotBrain
                     catch (Exception)
                     {
                     }
-                //}
+                }
                 if (Reload > 0)
                 {
                     Reload -= Time.deltaTime;
                 }
 
-                if (Input.GetMouseButtonDown(0) && !_botWithCode)
-                {
-                    RaycastHit hit;
-                    if (Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out hit))
-                    {
-                        _agent.SetDestination(hit.point);
-                    }
-                }
+                //if (Input.GetMouseButtonDown(0) && !_botWithCode)
+                //{
+                //    RaycastHit hit;
+                //    if (Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out hit))
+                //    {
+                //        _agent.SetDestination(hit.point);
+                //    }
+                //}
             }
         }
 
@@ -259,6 +268,7 @@ public class BotBrain
             }
 
             TakeDamage(Health);
+            Instantiate(Exploson, transform);
         }
 
         /// <summary>
