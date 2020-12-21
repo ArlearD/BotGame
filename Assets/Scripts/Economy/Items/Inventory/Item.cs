@@ -2,6 +2,7 @@
 
 namespace Economy.Items.Inventory
 {
+    [Serializable]
     public class Item
     {
         public enum ItemType

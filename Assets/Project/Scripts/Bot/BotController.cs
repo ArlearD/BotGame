@@ -1,7 +1,10 @@
-﻿using Assets.Scripts.Interfaces;
+﻿using Assets.Scripts.Economy.Data;
+using Assets.Scripts.Interfaces;
 using GameControl;
 using System;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -16,20 +19,50 @@ namespace Assets.Scripts.Bot
         private NavMeshAgent _agent;
         private MethodInfo _playersUpdate;
         private object _pleyerCodeClassObject;
-        private int Health;
+        public int Health { get; private set; }
         private float Reload;
         private float Tick;
         private bool _botWithCode;
+        private string asemblyName;
 
+        public bool IHaveArmor;
+        public bool IHaveWeapon;
+        public bool IHaveBoots;
+
+        public Animation Animation;
+        public GameObject Exploson;
+
+        public PlayerDataFieldsInfo playerDataFields;
         public HealthBar healthBar;
         public float reloadTime;
-        public int maxHealth;
         public MapController mapController;
         public Text nickName;
+        public bool IsDead;
+        public int Damage;
+        public string Code;
 
-        public void InitUserBot(string code, string botName)
+
+
+        public void InitUserBot(string code, string botName, PlayerDataFieldsInfo playerDataFields)
         {
+            Code = code;
+            this.playerDataFields = playerDataFields;
             nickName.text = botName;
+
+
+            if (playerDataFields.Equipment.Armour != null)
+            {
+                IHaveArmor = true;
+            }
+            if (playerDataFields.Equipment.Boots != null)
+            {
+                IHaveWeapon = true;
+            }
+            if (playerDataFields.Equipment.Weapon != null)
+            {
+                IHaveBoots = true;
+            }
+
 
             code = @"
 using System;
@@ -39,12 +72,10 @@ using UnityEngine;
 public class BotBrain
 {
     private BotController _bot;
-    private MapController _map;
 
-    public BotBrain(BotController bot, MapController map)
+    public BotBrain(BotController bot)
     {
         _bot = bot;
-        _map = map;
     }
         public void Do()
         {"
@@ -57,15 +88,15 @@ public class BotBrain
             _botWithCode = true;
             Type magicType = assembly.GetType("BotBrain");
 
-
             ConstructorInfo[] magicConstructor = magicType.GetConstructors();
-            _pleyerCodeClassObject = magicConstructor[0].Invoke(new object[] { this, mapController });
+            _pleyerCodeClassObject = magicConstructor[0].Invoke(new object[] { this });
 
             _playersUpdate = magicType.GetMethod("Do");
 
 
             Assembly CompileExecutable(string codes)
             {
+                asemblyName = botName + DateTime.Now.Ticks.ToString();
 
                 CodeDomProvider provider = new Microsoft.CSharp.CSharpCodeProvider(new System.Collections.Generic.Dictionary<string, string>()
         { { "CompilerVersion", "v4.8" } });
@@ -74,7 +105,7 @@ public class BotBrain
                 {
                     GenerateExecutable = false,
 
-                    OutputAssembly = "BotBrain",
+                    OutputAssembly = asemblyName,
 
                     GenerateInMemory = true,
 
@@ -104,17 +135,23 @@ public class BotBrain
 
         void Start()
         {
-            Health = maxHealth;
+            Health = IHaveArmor? 200: 100;
+            Damage = IHaveWeapon? 20 : 10;
             Reload = reloadTime;
-            if(healthBar!=null)
-                healthBar.SetMaxHealth(maxHealth);
+            if (healthBar != null)
+                healthBar.SetMaxHealth(Health);
 
 
             _mainCamera = Camera.main;
             _agent = GetComponent<NavMeshAgent>();
             _agent.acceleration = float.MaxValue;
             _agent.angularSpeed = float.MaxValue;
-            _agent.speed = 5;
+            _agent.speed = IHaveBoots? 10: 5;
+        }
+
+        private void OnDestroy()
+        {
+            File.Delete(Directory.GetCurrentDirectory() + @"\" + asemblyName);
         }
 
         void OnDrawGizmos()
@@ -139,45 +176,65 @@ public class BotBrain
 
         void Update()
         {
-            if (Health <= 0) Destroy(gameObject);
-
-            Tick += Time.deltaTime;
-            if (Tick >= 1/2f)
+            if (!IsDead && !mapController.GameIsStopped)
             {
-                Tick = 0;
-                try
+                if (Health <= 0)
                 {
-                    var _playerCodeValue = _playersUpdate.Invoke(_pleyerCodeClassObject, new object[] { });
+                    IsDead = true;
+                    gameObject.GetComponent<Collider>().enabled = false;
+                    gameObject.GetComponent<NavMeshAgent>().enabled = false;
+                    Animation.Play("Death");
+                    enabled = false;
                 }
-                catch (Exception)
-                {
-                }
-            }
-            if (Reload > 0)
-            {
-                Reload -= Time.deltaTime;
-            }
 
-            if (Input.GetMouseButtonDown(0) && !_botWithCode)
-            {
-                RaycastHit hit;
-                if (Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out hit))
+                Tick += Time.deltaTime;
+                if (Tick >= 1 / 2f)
                 {
-                    _agent.SetDestination(hit.point);
+                    Tick = 0;
+                    try
+                    {
+                        var _playerCodeValue = _playersUpdate.Invoke(_pleyerCodeClassObject, new object[] { });
+                    }
+                    catch (Exception)
+                    {
+                    }
                 }
-            }
+                if (Reload > 0)
+                {
+                    Reload -= Time.deltaTime;
+                }
 
+                //if (Input.GetMouseButtonDown(0) && !_botWithCode)
+                //{
+                //    RaycastHit hit;
+                //    if (Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out hit))
+                //    {
+                //        _agent.SetDestination(hit.point);
+                //    }
+                //}
+            }
         }
 
+        /// <summary>
+        /// Бот говорит том, где он сейчас находится.
+        /// </summary>
+        /// <returns>Текущие координаты в формате Vector2</returns>
         public Vector2 GetPosition()
         {
             var vector = new Vector2(transform.position.x - 460, transform.position.z - 460);
             return vector;
         }
 
+        /// <summary>
+        /// Бот идет в заданную точку.
+        /// </summary>
+        /// <param name="x">Координата x</param>
+        /// <param name="y">Координата y</param>
         public void GoToPosition(float x, float y)
         {
-            if (x < 0 || y < 0 || x > 60 || y > 60) 
+            if (Health <= 0) return;
+
+            if (x < 0 || y < 0 || x > 60 || y > 60)
                 return;
 
             //Поправка на размер карты
@@ -187,26 +244,36 @@ public class BotBrain
             _agent.SetDestination(new Vector3(x, transform.position.y, y));
         }
 
+        /// <summary>
+        /// Бот бьет себя.
+        /// </summary>
+        /// <param name="damage">Количество урона</param>
         public void TakeDamage(int damage)
         {
             Health -= damage;
             healthBar.SetHealth(Health);
         }
 
-
+        /// <summary>
+        /// Бот совершает самоподрыв, теряет все здоровье и наносит такой же урон всем ботам в радиусе 5.
+        /// </summary>
         public void Suicide()
         {
-            Health =- 100;
             var enemys = Physics.OverlapSphere(transform.position, 5f)
                 .Where(x => x.gameObject.tag == "Bot" && x.gameObject != gameObject);
 
             foreach (var enemy in enemys)
             {
-                enemy.gameObject.GetComponent<BotController>().TakeDamage(100);
+                enemy.gameObject.GetComponent<BotController>().TakeDamage(Health);
             }
 
+            TakeDamage(Health);
+            Instantiate(Exploson, transform);
         }
 
+        /// <summary>
+        /// Бот атакует область прямо перед собой и наносит урон первому попавшемуся противнику.
+        /// </summary>
         public void Attack()
         {
             var viewAngle = gameObject.transform.rotation.eulerAngles.y * Math.PI / 180;
@@ -223,11 +290,16 @@ public class BotBrain
 
             if (enemy != null && Reload <= 0)
             {
-                enemy.GetComponent<BotController>().TakeDamage(10);
+                enemy.GetComponent<BotController>().TakeDamage(Damage);
+                Animation.Play("Attack");
                 Reload = reloadTime;
             }
         }
 
+        /// <summary>
+        /// Бот мгновенно поворачивается в сторону заданной цели.
+        /// </summary>
+        /// <param name="target"></param>
         public void Rotate(Vector2 target)
         {
             Vector3 direction = (new Vector3(target.x + 460, 0, target.y + 460) - transform.position).normalized;
@@ -235,10 +307,22 @@ public class BotBrain
             transform.rotation = lookRotation;
         }
 
+        /// <summary>
+        /// Бот говорит о том, в каком направлении он сейчас повернут.
+        /// </summary>
+        /// <returns></returns>
         public Vector2 GetRotation()
         {
             return new Vector2(transform.rotation.x, transform.rotation.z);
         }
 
+        /// <summary>
+        /// Бот говорит о оставшихся живых противниках.
+        /// </summary>
+        /// <returns>Список координат живых противников</returns>
+        public List<Vector2> Vizor()
+        {
+            return mapController.Vizor(nickName.text);
+        }
     }
 }

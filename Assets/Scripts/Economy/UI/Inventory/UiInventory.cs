@@ -12,7 +12,7 @@ namespace Economy.UI.Inventory
         private Transform _itemSlotTemplate;
         public MarketScrollView market;
 
-        private void Awake()
+        private void Start()
         {
             _itemSlotContainer = transform.Find("Item Slot Container");
             _itemSlotTemplate = _itemSlotContainer.Find("Item Slot Template");
@@ -44,27 +44,30 @@ namespace Economy.UI.Inventory
 
         private void Refresh()
         {
-            foreach (Transform child in _itemSlotContainer)
+            if (this != null)
             {
-                if (child != _itemSlotTemplate)
-                    Destroy(child.gameObject);
-            }
+                foreach (Transform child in _itemSlotContainer)
+                {
+                    if (child != _itemSlotTemplate)
+                        Destroy(child.gameObject);
+                }
 
-            var x = 0;
-            var y = 0;
-            var slotSize = 100f;
-            foreach (var item in _inventory.ItemList)
-            {
-                var itemSlotRectTransform = Instantiate(_itemSlotTemplate, _itemSlotContainer).GetComponent<RectTransform>();
-                itemSlotRectTransform.gameObject.SetActive(true);
-                itemSlotRectTransform.GetComponent<InventoryItem>().SetType(item.Type);
-                itemSlotRectTransform.anchoredPosition = new Vector2(x * slotSize, y * slotSize);
-                var text = itemSlotRectTransform.Find("Text").GetComponent<Text>();
-                text.text = item.Type + " \nx" + item.Amount;
-                x++;
-                if (x <= 10) continue;
-                x = 0;
-                y++;
+                var x = 0;
+                var y = 0;
+                var slotSize = 100f;
+                foreach (var item in _inventory.ItemList)
+                {
+                    var itemSlotRectTransform = Instantiate(_itemSlotTemplate, _itemSlotContainer).GetComponent<RectTransform>();
+                    itemSlotRectTransform.gameObject.SetActive(true);
+                    itemSlotRectTransform.GetComponent<InventoryItem>().SetType(item.Type);
+                    itemSlotRectTransform.anchoredPosition = new Vector2(x * slotSize, y * slotSize);
+                    var text = itemSlotRectTransform.Find("Text").GetComponent<Text>();
+                    text.text = item.Type + " \nx" + item.Amount;
+                    x++;
+                    if (x <= 10) continue;
+                    x = 0;
+                    y++;
+                }
             }
         }
     }

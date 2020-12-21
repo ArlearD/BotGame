@@ -10,6 +10,7 @@ using Economy.Items.Boots.Base;
 using Economy.Items.Inventory;
 using Economy.Items.Weapons.Base;
 using Economy.UI.BuildingList;
+using Economy.UI.Equipment.Slots;
 using Economy.UI.Inventory;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,18 +20,23 @@ namespace Economy
 {
     public class Player : MonoBehaviour
     {
-        [SerializeField] public Resources resources;//
-        [SerializeField] public List<Building> buildings = new List<Building>();//
+        [SerializeField] public Resources resources;
+        [SerializeField] public List<Building> buildings = new List<Building>();
         [SerializeField] public UiInventory uiInventory;
         [SerializeField] public Text nameText;
+        public ArmourSlot armourSlot;
+        public WeaponSlot weaponSlot;
+        public BootsSlot bootsSlot;
         public BuildingScrollView buildingList;
-        private Inventory inventory;//
+        private Inventory inventory;
         public string userName;
         public int workers;
-        public int workersMoney;//
-        public Equipment equipment;//
+        public int workersMoney;
+        public Equipment equipment;
 
-        public Effect Effects => equipment.Armour.Effects + equipment.Weapon.Effects + equipment.Boots.Effects;
+        public Effect Effects => (equipment.Armour.Effects != null ? equipment.Armour.Effects : new Effect(0, 0, 0))
+                                 + (equipment.Weapon != null ? equipment.Weapon.Effects : new Effect(0, 0, 0))
+                                 + (equipment.Boots != null ? equipment.Boots.Effects : new Effect(0, 0, 0));
 
 
         public void SaveData()
@@ -39,16 +45,16 @@ namespace Economy
 
             switch (PlayersData.CurrentPlayer)
             {
-                case CurrentPlayerEconomy.Donatello:
+                case EconomyPlayerType.Donatello:
                     PlayersData.Donatello = player;
                     break;
-                case CurrentPlayerEconomy.Leonardo:
+                case EconomyPlayerType.Leonardo:
                     PlayersData.Leonardo = player;
                     break;
-                case CurrentPlayerEconomy.Michelangelo:
+                case EconomyPlayerType.Michelangelo:
                     PlayersData.Michelangelo = player;
                     break;
-                case CurrentPlayerEconomy.Raphael:
+                case EconomyPlayerType.Raphael:
                     PlayersData.Raphael = player;
                     break;
             }
@@ -58,35 +64,35 @@ namespace Economy
         {
             switch (PlayersData.CurrentPlayer)
             {
-                case CurrentPlayerEconomy.Donatello:
+                case EconomyPlayerType.Donatello:
                     SetValues(PlayersData.Donatello);
                     break;
-                case CurrentPlayerEconomy.Leonardo:
+                case EconomyPlayerType.Leonardo:
                     SetValues(PlayersData.Leonardo);
                     break;
-                case CurrentPlayerEconomy.Michelangelo:
+                case EconomyPlayerType.Michelangelo:
                     SetValues(PlayersData.Michelangelo);
                     break;
-                case CurrentPlayerEconomy.Raphael:
+                case EconomyPlayerType.Raphael:
                     SetValues(PlayersData.Raphael);
                     break;
             }
 
 
-            void SetValues(PlayerDataFieldsInfo player)
+            void SetValues(PlayerDataFieldsInfo loadedPlayer)
             {
                 userName = PlayersData.CurrentPlayer.ToString();
-                if (player != null)
+                if (loadedPlayer != null)
                 {
-                    resources = player.resources;
-                    buildings = player.buildings;
+                    resources = loadedPlayer.Resources;
+                    buildings = loadedPlayer.Buildings;
+                    inventory = loadedPlayer.Inventory;
+                    workersMoney = loadedPlayer.WorkersMoney;
+                    equipment = loadedPlayer.Equipment;
 
-                    foreach (var building in buildings)
-                        buildingList.AddBuilding(building);
-
-                    inventory = player.inventory;
-                    workersMoney = player.workersMoney;
-                    equipment = player.equipment;
+                    armourSlot.SetItem(loadedPlayer.Equipment.Armour);
+                    weaponSlot.SetItem(loadedPlayer.Equipment.Weapon);
+                    bootsSlot.SetItem(loadedPlayer.Equipment.Boots);
                 }
             }
         }
@@ -147,15 +153,13 @@ namespace Economy
         {
             if (newArmour != null && !RemoveItem(new Item(newArmour.ItemType, 1))) return;
             if (equipment.Armour != null)
-            {
                 inventory.AddItem(new Item(equipment.Armour.ItemType, 1));
-            }
             equipment.Armour = newArmour;
         }
 
         public void EquipBoots(IBoots newBoots)
         {
-            if (!RemoveItem(new Item(newBoots.ItemType, 1))) return;
+            if (newBoots != null && !RemoveItem(new Item(newBoots.ItemType, 1))) return;
             if (equipment.Boots != null)
                 inventory.AddItem(new Item(equipment.Boots.ItemType, 1));
             equipment.Boots = newBoots;
@@ -163,7 +167,7 @@ namespace Economy
 
         public void EquipWeapon(IWeapon newWeapon)
         {
-            if (!RemoveItem(new Item(newWeapon.ItemType, 1))) return;
+            if (newWeapon != null && !RemoveItem(new Item(newWeapon.ItemType, 1))) return;
             if (equipment.Weapon != null)
                 inventory.AddItem(new Item(equipment.Weapon.ItemType, 1));
             equipment.Weapon = newWeapon;
