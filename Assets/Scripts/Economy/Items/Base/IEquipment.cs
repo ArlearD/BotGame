@@ -1,4 +1,5 @@
 ﻿using Economy.Items.Inventory;
+using UnityEngine;
 
 namespace Economy.Items.Base
 {
@@ -7,5 +8,7 @@ namespace Economy.Items.Base
         Effect Effects { get; }
 
         Item.ItemType ItemType { get; }
+
+        Sprite Icon { get; }
     }
 }

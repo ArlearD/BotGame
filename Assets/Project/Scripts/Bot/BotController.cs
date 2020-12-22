@@ -37,6 +37,9 @@ namespace Assets.Scripts.Bot
         public float reloadTime;
         public MapController mapController;
         public Text nickName;
+        public Image armourIcon;
+        public Image weaponIcon;
+        public Image bootsIcon;
         public bool IsDead;
         public int Damage;
         public string Code;
@@ -53,18 +56,28 @@ namespace Assets.Scripts.Bot
             if (playerDataFields.Equipment.Armour != null)
             {
                 IHaveArmor = true;
+                armourIcon.sprite = playerDataFields.Equipment.Armour.Icon;
             }
-            if (playerDataFields.Equipment.Boots != null)
-            {
-                IHaveWeapon = true;
-            }
+            else
+                armourIcon.gameObject.SetActive(false);
             if (playerDataFields.Equipment.Weapon != null)
             {
-                IHaveBoots = true;
+                IHaveWeapon = true;
+                weaponIcon.sprite = playerDataFields.Equipment.Weapon.Icon;
             }
+            else
+                weaponIcon.gameObject.SetActive(false);
+            if (playerDataFields.Equipment.Boots != null)
+            {
+                IHaveBoots = true;
+                bootsIcon.sprite = playerDataFields.Equipment.Boots.Icon;
+            }
+            else
+                bootsIcon.gameObject.SetActive(false);
 
 
-            code = @"
+
+                code = @"
 using System;
 using Assets.Scripts.Bot;
 using GameControl;
@@ -79,8 +92,8 @@ public class BotBrain
     }
         public void Do()
         {"
-          + code +
-      @"}
+                       + code +
+                       @"}
 }";
 
             var assembly = CompileExecutable(code);

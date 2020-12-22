@@ -1,6 +1,7 @@
 ﻿using Economy.Items.Armour.Base;
 using Economy.Items.Base;
 using Economy.Items.Inventory;
+using UnityEngine;
 
 namespace Economy.Items.Armour
 {
@@ -8,5 +9,6 @@ namespace Economy.Items.Armour
     {
         public Effect Effects { get; }
         public Item.ItemType ItemType { get; }
+        public Sprite Icon { get; }
     }
 }
