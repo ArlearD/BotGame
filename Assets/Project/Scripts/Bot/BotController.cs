@@ -183,6 +183,7 @@ public class BotBrain
                     IsDead = true;
                     gameObject.GetComponent<Collider>().enabled = false;
                     gameObject.GetComponent<NavMeshAgent>().enabled = false;
+                    Animation.Stop();
                     Animation.Play("Death");
                     enabled = false;
                 }
@@ -291,6 +292,7 @@ public class BotBrain
             if (enemy != null && Reload <= 0)
             {
                 enemy.GetComponent<BotController>().TakeDamage(Damage);
+                Animation.Stop("Attack");
                 Animation.Play("Attack");
                 Reload = reloadTime;
             }
