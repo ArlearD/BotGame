@@ -25,6 +25,8 @@ namespace Economy.UI.BuildingList
                 buttonGameObject.SetActive(false);
                 var button = buttonGameObject.GetComponent<BuildingScrollViewButton>();
                 button.SetName(CreateButtonName(building), building.id);
+                if (!building.isOn)
+                    button.GetComponent<Image>().color = Color.grey;
                 _buttons.Add(button);
             }
 
