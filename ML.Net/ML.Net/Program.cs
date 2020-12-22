@@ -1,0 +1,33 @@
+﻿using Microsoft.ML;
+using Microsoft.ML.Data;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Net.Http.Headers;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Text.Json;
+
+namespace ML.Net
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var answer = ML.Generator(@"{""code"":""            var botPostitions = _bot.Vizor();\r\n var currentPosition = _bot.GetPosition();\r\n            foreach (var position in botPostitions)\r\n            {\r\n                    if (Math.Abs(position.x - currentPosition.x) < 2 && Math.Abs(position.y - currentPosition.y) < 2)\r\n                    {\r\n _bot.GoToPosition(position.x - 1, position.y - 1);\r\n _bot.Rotate(position);\r\n _bot.Attack();\r\n                    }\r\n                    else\r\n                    {\r\n _bot.GoToPosition(position.x - 1, position.y - 1);\r\n _bot.Attack();\r\n                    }\r\n            }"",""IsWinner"":""0"",""HaveArmor"":""0"",""HaveWeapon"":""0"",""HaveBoots"":""0""}
+            { ""code"":""            var a = _bot.Vizor();\r\n            _bot.GoToPosition(a[0].x, a[0].y);\r\n            _bot.Attack();"",""IsWinner"":""1"",""HaveArmor"":""0"",""HaveWeapon"":""0"",""HaveBoots"":""0""}
+            { ""code"":""            var a = _bot.Vizor();\r\n            _bot.GoToPosition(a[0].x, a[0].y);\r\n            var currentPosition = _bot.GetPosition();\r\n            _bot.Attack();\r\n            if (Math.Abs(a[0].x - currentPosition.x) < 4 && Math.Abs(a[0].y - currentPosition.y) < 4)\r\n            {\r\n                _bot.Suicide();\r\n            }"",""IsWinner"":""0"",""HaveArmor"":""0"",""HaveWeapon"":""0"",""HaveBoots"":""0""}
+            { ""code"":""            var a = _bot.Vizor();\r\n            _bot.GoToPosition(a[0].x, a[0].y);\r\n            var currentPosition = _bot.GetPosition();\r\n            _bot.Attack();\r\n            if (Math.Abs(a[0].x - currentPosition.x) < 4 && Math.Abs(a[0].y - currentPosition.y) < 4 && _bot.Health < 60)\r\n            {\r\n                _bot.Suicide();\r\n            }"",""IsWinner"":""0"",""HaveArmor"":""0"",""HaveWeapon"":""0"",""HaveBoots"":""0""}
+            { ""code"":""            var botPostitions = _bot.Vizor();\r\n            var currentPosition = _bot.GetPosition();\r\n            foreach (var position in botPostitions)\r\n            {\r\n                    if (Math.Abs(position.x - currentPosition.x) < 2 && Math.Abs(position.y - currentPosition.y) < 2)\r\n                    {\r\n                        _bot.GoToPosition(position.x - 1, position.y - 1);\r\n                        _bot.Rotate(position);\r\n                        _bot.Attack();\r\n                    }\r\n                    else\r\n                    {\r\n                        _bot.GoToPosition(position.x - 1, position.y - 1);\r\n                        _bot.Attack();\r\n                    }\r\n            }"",""IsWinner"":""0"",""HaveArmor"":""0"",""HaveWeapon"":""0"",""HaveBoots"":""0""}
+            { ""code"":""            var a = _bot.Vizor();\r\n            _bot.GoToPosition(a[0].x, a[0].y);\r\n            _bot.Attack();"",""IsWinner"":""1"",""HaveArmor"":""0"",""HaveWeapon"":""0"",""HaveBoots"":""0""}
+            { ""code"":""            var a = _bot.Vizor();\r\n            _bot.GoToPosition(a[0].x, a[0].y);\r\n            var currentPosition = _bot.GetPosition();\r\n            _bot.Attack();\r\n            if (Math.Abs(a[0].x - currentPosition.x) < 4 && Math.Abs(a[0].y - currentPosition.y) < 4)\r\n            {\r\n                _bot.Suicide();\r\n            }"",""IsWinner"":""0"",""HaveArmor"":""0"",""HaveWeapon"":""0"",""HaveBoots"":""0""}
+            { ""code"":""            var a = _bot.Vizor();\r\n            _bot.GoToPosition(a[0].x, a[0].y);\r\n            var currentPosition = _bot.GetPosition();\r\n            _bot.Attack();\r\n            if (Math.Abs(a[0].x - currentPosition.x) < 4 && Math.Abs(a[0].y - currentPosition.y) < 4 && _bot.Health < 60)\r\n            {\r\n                _bot.Suicide();\r\n            }"",""IsWinner"":""0"",""HaveArmor"":""0"",""HaveWeapon"":""0"",""HaveBoots"":""0""}
+            { ""code"":""            var botPostitions = _bot.Vizor();\r\n            var currentPosition = _bot.GetPosition();\r\n            foreach (var position in botPostitions)\r\n            {\r\n                    if (Math.Abs(position.x - currentPosition.x) < 2 && Math.Abs(position.y - currentPosition.y) < 2)\r\n                    {\r\n                        _bot.GoToPosition(position.x - 1, position.y - 1);\r\n                        _bot.Rotate(position);\r\n                        _bot.Attack();\r\n                    }\r\n                    else\r\n                    {\r\n                        _bot.GoToPosition(position.x - 1, position.y - 1);\r\n                        _bot.Attack();\r\n                    }\r\n            }"",""IsWinner"":""0"",""HaveArmor"":""0"",""HaveWeapon"":""0"",""HaveBoots"":""0""}
+            { ""code"":""            var a = _bot.Vizor();\r\n            _bot.GoToPosition(a[0].x, a[0].y);\r\n            _bot.Attack();"",""IsWinner"":""0"",""HaveArmor"":""0"",""HaveWeapon"":""0"",""HaveBoots"":""0""}
+            { ""code"":""            var botPostitions = _bot.Vizor();\r\n            var currentPosition = _bot.GetPosition();\r\n            foreach (var position in botPostitions)\r\n            {\r\n                    if (Math.Abs(position.x - currentPosition.x) < 2 && Math.Abs(position.y - currentPosition.y) < 2)\r\n                    {\r\n                        _bot.GoToPosition(position.x - 1, position.y - 1);\r\n                        _bot.Rotate(position);\r\n                        _bot.Attack();\r\n                    }\r\n                    else\r\n                    {\r\n                        _bot.GoToPosition(position.x - 1, position.y - 1);\r\n                        _bot.Attack();\r\n                    }\r\n            }"",""IsWinner"":""1"",""HaveArmor"":""0"",""HaveWeapon"":""0"",""HaveBoots"":""0""}
+            { ""code"":""            var a = _bot.Vizor();\r\n            _bot.GoToPosition(a[0].x, a[0].y);\r\n            var currentPosition = _bot.GetPosition();\r\n            _bot.Attack();\r\n            if (Math.Abs(a[0].x - currentPosition.x) < 4 && Math.Abs(a[0].y - currentPosition.y) < 4 && _bot.Health < 60)\r\n            {\r\n                _bot.Suicide();\r\n            }"",""IsWinner"":""0"",""HaveArmor"":""0"",""HaveWeapon"":""0"",""HaveBoots"":""0""}");
+            Console.WriteLine(answer);
+        }
+    }
+}
