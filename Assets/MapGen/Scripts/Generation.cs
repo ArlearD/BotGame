@@ -195,7 +195,7 @@ public class Generation : MonoBehaviour
                     var subject = Instantiate(Biome.GetRandomPrefab(),
                         _generationSynchonizer.GetRandomPositionForTilePosition(transform.position, yPos,
                             vertex.x, vertex.z),
-                        Quaternion.identity);
+                        Quaternion.Euler(UnityEngine.Random.Range(-45, 45), UnityEngine.Random.Range(-45, 45), UnityEngine.Random.Range(-45, 45)));
 
                     subject.transform.parent = transform;
                 }
