@@ -29,15 +29,8 @@ namespace GameControl
 
         public bool GameIsStopped;
 
-        public async void Init(float y, Vector2[] positions, Vector2 middlePos)
-        {
-            Player.transform.position = new Vector3(middlePos.x, y + 10, middlePos.y);
-            Tick = 0f;
-            timeOutInfo.enabled = false;
-
-            bots = new List<GameObject>();
-
-            string bot1Code = @"
+        
+        public string bot1Code = @"
             var botPostitions = _bot.Vizor();
             var currentPosition = _bot.GetPosition();
             foreach (var position in botPostitions)
@@ -56,13 +49,13 @@ namespace GameControl
             }
 ";
 
-            string bot2Code = @"
+            public string bot2Code = @"
             var a = _bot.Vizor();
             _bot.GoToPosition(a[0].x, a[0].y);
             _bot.Attack();
 ";
 
-            string bot3Code = @"
+            public string bot3Code = @"
             var a = _bot.Vizor();
             _bot.GoToPosition(a[0].x, a[0].y);
             var currentPosition = _bot.GetPosition();
@@ -73,7 +66,7 @@ namespace GameControl
             }
 ";
 
-            string bot4Code = @"
+            public string bot4Code = @"
             var a = _bot.Vizor();
             _bot.GoToPosition(a[0].x, a[0].y);
             var currentPosition = _bot.GetPosition();
@@ -84,7 +77,7 @@ namespace GameControl
             }
 ";
 
-            string bot5Code = @"
+            public string bot5Code = @"
             var botPostitions = _bot.Vizor();
             var currentPosition = _bot.GetPosition();
             if (botPostitions.Count > 1)
@@ -127,6 +120,15 @@ namespace GameControl
                     }
             }
 ";
+        
+        public async void Init(float y, Vector2[] positions, Vector2 middlePos)
+        {
+            Player.transform.position = new Vector3(middlePos.x, y + 10, middlePos.y);
+            Tick = 0f;
+            timeOutInfo.enabled = false;
+
+            bots = new List<GameObject>();
+
 
 
             //InitializeBot(new Vector3(positions[0].x, y, positions[0].y), bot1Code, "Arleard");

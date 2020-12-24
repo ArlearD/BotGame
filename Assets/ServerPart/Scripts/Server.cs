@@ -84,9 +84,29 @@ public class Server : MonoBehaviour, INetEventListener, INetLogger
         var x = Random.Range(460, 60 + 460);
         var z = Random.Range(460, 60 + 460);
         var pos = new Vector3(x, levelGenerator.MaxTileYPosition + 10, z);
-        var code = @"var a = _bot.Vizor();
+
+        string code = "";
+        switch (Random.Range(0, 5))
+        {
+            case 0:
+                code = mapController.bot1Code;
+                break;
+            case 1:
+                code = mapController.bot2Code;
+                break;
+            case 2:
+                code = mapController.bot3Code;
+                break;
+            case 3:
+                code = mapController.bot4Code;
+                break;
+            case 4:
+                code = mapController.bot5Code;
+                break;
+        }
+        /*var code = @"var a = _bot.Vizor();
             _bot.GoToPosition(a[0].x, a[0].y);
-            _bot.Attack();";
+            _bot.Attack();";*/
         var name = peer.EndPoint.ToString().Replace(":", "-");
         clients[peer].ClientData.Name = name;
 
