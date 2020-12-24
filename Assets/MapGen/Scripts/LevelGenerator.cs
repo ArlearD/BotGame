@@ -54,6 +54,7 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private GameObject navMesh;
 
     [SerializeField] private GameObject mapController;
+    public float MaxTileYPosition = 0;
 
     void Start()
     {
@@ -614,6 +615,7 @@ public class LevelGenerator : MonoBehaviour
             var maxTileYPosition = nearlyTiles
                 .SelectMany(x => x.GetComponent<MeshFilter>().mesh.vertices)
                 .Max(x => x.y);
+            this.MaxTileYPosition = maxTileYPosition;
         
             Player.transform.position = new Vector3(_halfOfMapSize, maxTileYPosition + 15, _halfOfMapSize);
 

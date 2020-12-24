@@ -17,17 +17,14 @@ namespace GameControl
 
         public GameObject botPrefab;
 
-        [SerializeField]
-        private GameObject Player;
+        [SerializeField] private GameObject Player;
 
         private float Tick;
         private float Tick2;
 
-        [SerializeField]
-        private Text timeInfo;
+        [SerializeField] private Text timeInfo;
 
-        [SerializeField]
-        private Text timeOutInfo;
+        [SerializeField] private Text timeOutInfo;
 
         public bool GameIsStopped;
 
@@ -131,34 +128,32 @@ namespace GameControl
 ";
 
 
-
             //InitializeBot(new Vector3(positions[0].x, y, positions[0].y), bot1Code, "Arleard");
             //InitializeBot(new Vector3(490, y, 490));
 
             if (!string.IsNullOrEmpty(Data.Player1Code))
-                InitializeBot(new Vector3(positions[0].x, y, positions[0].y), Data.Player1Code, Data.Player1Name, PlayersData.Leonardo);
+                InitializeBot(new Vector3(positions[0].x, y, positions[0].y), Data.Player1Code, Data.Player1Name,
+                    PlayersData.Leonardo);
             if (!string.IsNullOrEmpty(Data.Player2Code))
-                InitializeBot(new Vector3(positions[1].x, y, positions[1].y), Data.Player2Code, Data.Player2Name, PlayersData.Raphael);
+                InitializeBot(new Vector3(positions[1].x, y, positions[1].y), Data.Player2Code, Data.Player2Name,
+                    PlayersData.Raphael);
             if (!string.IsNullOrEmpty(Data.Player3Code))
-                InitializeBot(new Vector3(positions[2].x, y, positions[2].y), Data.Player3Code, Data.Player3Name, PlayersData.Donatello);
+                InitializeBot(new Vector3(positions[2].x, y, positions[2].y), Data.Player3Code, Data.Player3Name,
+                    PlayersData.Donatello);
             if (!string.IsNullOrEmpty(Data.Player4Code))
-                InitializeBot(new Vector3(positions[3].x, y, positions[3].y), Data.Player4Code, Data.Player4Name, PlayersData.Michelangelo);
+                InitializeBot(new Vector3(positions[3].x, y, positions[3].y), Data.Player4Code, Data.Player4Name,
+                    PlayersData.Michelangelo);
         }
 
-        private void InitializeBot(Vector3 position, string code = null, string name = null, PlayerDataFieldsInfo playerDataFieldsInfo = null)
+        public GameObject InitializeBot(Vector3 position, string code = null, string name = null,
+            PlayerDataFieldsInfo playerDataFieldsInfo = null)
         {
             var bot = Instantiate(botPrefab, position, Quaternion.identity);
-            try
-            {
-                if (!string.IsNullOrEmpty(code) && !string.IsNullOrEmpty(name))
-                    bot.GetComponent<BotController>().InitUserBot(code, name, playerDataFieldsInfo);
-            }
-            catch (System.Exception)
-            {
-                Debug.LogError($"Ошибка создания бота: {name}");
-            }
+            if (!string.IsNullOrEmpty(code) && !string.IsNullOrEmpty(name))
+                bot.GetComponent<BotController>().InitUserBot(code, name, playerDataFieldsInfo);
 
             bots.Add(bot);
+            return bot;
         }
 
 
@@ -173,7 +168,8 @@ namespace GameControl
 
             timeInfo.text = Tick.ToString();
 
-            if (Tick > 60 || bots.Where(x => !x.GetComponent<BotController>().IsDead)?.Count() <= 1)
+            //if (Tick > 60 || bots.Where(x => !x.GetComponent<BotController>().IsDead)?.Count() <= 1)
+            if (false)
             {
                 Tick2 += Time.deltaTime;
                 GameIsStopped = true;
@@ -182,7 +178,8 @@ namespace GameControl
                 {
                     GameIsStopped = true;
                     var botControllers = bots.Select(x => x.GetComponent<BotController>());
-                    using (StreamWriter sw = new StreamWriter(Directory.GetCurrentDirectory() + @"\gameResults.json", true))
+                    using (StreamWriter sw = new StreamWriter(Directory.GetCurrentDirectory() + @"\gameResults.json",
+                        true))
                     {
                         foreach (var botController in botControllers)
                         {
@@ -194,7 +191,7 @@ namespace GameControl
                                     botController.IHaveArmor ? "1" : "0",
                                     botController.IHaveWeapon ? "1" : "0",
                                     botController.IHaveBoots ? "1" : "0")
-                                    ));
+                                ));
                                 botController.playerDataFields.LoseBattle();
                             }
                             else
@@ -205,11 +202,9 @@ namespace GameControl
                                     botController.IHaveArmor ? "1" : "0",
                                     botController.IHaveWeapon ? "1" : "0",
                                     botController.IHaveBoots ? "1" : "0")
-                                    ));
+                                ));
                                 botController.playerDataFields.WinBattle();
                             }
-
-
                         }
                     }
 
@@ -227,7 +222,7 @@ namespace GameControl
             var positions = new List<Vector2>();
             var notDeadBots = bots
                 .Where(x => !x.GetComponent<BotController>().IsDead
-                && x.GetComponent<BotController>().nickName.text != watcherName);
+                            && x.GetComponent<BotController>().nickName.text != watcherName);
             foreach (var bot in notDeadBots)
                 positions.Add(new Vector2(bot.transform.position.x - 460, bot.transform.position.z - 460));
 

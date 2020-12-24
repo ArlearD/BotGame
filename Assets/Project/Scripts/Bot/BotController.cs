@@ -96,9 +96,9 @@ public class BotBrain
 
             Assembly CompileExecutable(string codes)
             {
-                asemblyName = botName + DateTime.Now.Ticks.ToString();
+                asemblyName = botName + DateTime.Now.Ticks;
 
-                CodeDomProvider provider = new Microsoft.CSharp.CSharpCodeProvider(new System.Collections.Generic.Dictionary<string, string>()
+                CodeDomProvider provider = new Microsoft.CSharp.CSharpCodeProvider(new Dictionary<string, string>()
         { { "CompilerVersion", "v4.8" } });
 
                 CompilerParameters parameters = new CompilerParameters()
