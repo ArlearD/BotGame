@@ -139,7 +139,7 @@ public class Server : MonoBehaviour, INetEventListener, INetLogger
     public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
     {
         Debug.Log("[SERVER] peer disconnected " + peer.EndPoint + ", info: " + disconnectInfo.Reason);
-        //Destroy(clients[peer].Bot);
+        Destroy(clients[peer].Bot);
         clients.Remove(peer);
     }
 
