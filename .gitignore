@@ -1,5 +1,6 @@
-.idea
-gameResults.json
+.idea/
+./gameResults.json
+build/
 
 
 # This .gitignore file should be placed at the root of your Unity project directory

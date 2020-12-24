@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using ServerPart.Scripts;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -41,13 +42,28 @@ namespace Assets.Scripts.Bot
         public int Damage;
         public string Code;
 
+        private bool _isServer = true;
+        
+        public void InitClientBot(string botName)
+        {
+            nickName.text = botName;
+            _botWithCode = false;
+            _isServer = false;
+        }
 
+        public void UpdateFromServer(ClientData clientData)
+        {
+            oldPos = transform.position;
+            newPos = clientData.Position;
+            _lerpTime = 0;
+        }
 
         public void InitUserBot(string code, string botName, PlayerDataFieldsInfo playerDataFields)
         {
             Code = code;
             this.playerDataFields = playerDataFields;
             nickName.text = botName;
+            _isServer = true;
 
 
             if (playerDataFields.Equipment.Armour != null)
@@ -174,6 +190,10 @@ public class BotBrain
             transform.rotation = lookRotation;
         }
 
+        private Vector3 oldPos;
+        private Vector3 newPos;
+        private float _lerpTime;
+        
         void Update()
         {
             if (!IsDead && !mapController.GameIsStopped)
@@ -188,22 +208,31 @@ public class BotBrain
                     enabled = false;
                 }
 
-                Tick += Time.deltaTime;
-                if (Tick >= 1 / 2f)
+                if (_isServer)
                 {
-                    Tick = 0;
-                    try
+                    Tick += Time.deltaTime;
+                    if (Tick >= 1 / 2f)
                     {
-                        var _playerCodeValue = _playersUpdate.Invoke(_pleyerCodeClassObject, new object[] { });
+                        Tick = 0;
+                        try
+                        {
+                            var _playerCodeValue = _playersUpdate.Invoke(_pleyerCodeClassObject, new object[] { });
+                        }
+                        catch (Exception)
+                        {
+                        }
                     }
-                    catch (Exception)
+                    if (Reload > 0)
                     {
+                        Reload -= Time.deltaTime;
                     }
                 }
-                if (Reload > 0)
+                else
                 {
-                    Reload -= Time.deltaTime;
+                    transform.position = Vector3.Lerp(oldPos, newPos, _lerpTime);
+                    _lerpTime += Time.deltaTime / Time.fixedDeltaTime;
                 }
+                
 
                 //if (Input.GetMouseButtonDown(0) && !_botWithCode)
                 //{

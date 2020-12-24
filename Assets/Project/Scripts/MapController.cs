@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ServerPart.Scripts;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -151,6 +152,54 @@ namespace GameControl
             var bot = Instantiate(botPrefab, position, Quaternion.identity);
             if (!string.IsNullOrEmpty(code) && !string.IsNullOrEmpty(name))
                 bot.GetComponent<BotController>().InitUserBot(code, name, playerDataFieldsInfo);
+
+            bots.Add(bot);
+            return bot;
+        }
+
+
+        public void ApplyBots(ClientData[] clientData)
+        {
+            var toDelete = bots
+                .Where(x => clientData.All(y => y.Name != x.name))
+                .ToList();
+            
+            var toCreate = clientData
+                .Where(x => bots.All(y => y.name != x.Name));
+
+            var toUpdate = bots
+                .Where(x => toDelete.All(y => y.name != x.name));
+            
+            foreach (var data in toCreate)
+            {
+                Debug.Log("Client create");
+                InitializeClientBot(data);
+            }
+            
+            foreach (var go in toUpdate)
+            {
+                Debug.Log("Client update");
+                var data = clientData.First(x => x.Name == go.name);
+                go.GetComponent<BotController>().UpdateFromServer(data);
+            }
+            
+            foreach (var go in toDelete)
+            {
+                Debug.Log("Client delete");
+                bots.Remove(go);
+                Destroy(go);
+            }
+        }
+        
+        public GameObject InitializeClientBot(ClientData data)
+        {
+            var bot = Instantiate(botPrefab, data.Position, data.Rotation);
+            bot.transform.localScale *= 2;
+            if (!string.IsNullOrEmpty(data.Name))
+            {
+                bot.name = data.Name;
+                bot.GetComponent<BotController>().InitClientBot(data.Name);
+            }
 
             bots.Add(bot);
             return bot;

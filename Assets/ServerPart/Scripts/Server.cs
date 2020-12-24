@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using Assets.Scripts.Economy.Data;
@@ -14,11 +15,9 @@ using Random = UnityEngine.Random;
 public class Server : MonoBehaviour, INetEventListener, INetLogger
 {
     private NetManager _netServer;
+    private NetPacketProcessor _netPacketProcessor;
 
-    private NetDataWriter _dataWriter;
-    //private NetPeer _ourPeer;
-
-    private Dictionary<NetPeer, ClientData> clients = new Dictionary<NetPeer, ClientData>();
+    private Dictionary<NetPeer, ServerClientData> clients = new Dictionary<NetPeer, ServerClientData>();
     [SerializeField] private int maxClients = 32;
 
     //[SerializeField] private GameObject _serverBall;
@@ -31,16 +30,32 @@ public class Server : MonoBehaviour, INetEventListener, INetLogger
     void Start()
     {
         NetDebug.Logger = this;
-        _dataWriter = new NetDataWriter();
         _netServer = new NetManager(this);
         _netServer.Start(port);
         _netServer.BroadcastReceiveEnabled = true;
         _netServer.UpdateTime = 15;
+
+        _netPacketProcessor = new NetPacketProcessor();
+        _netPacketProcessor.RegisterNestedType(() => new ClientData());
     }
 
     void Update()
     {
         _netServer.PollEvents();
+        var packet = new ClientDataPacket
+        {
+            ClientData = clients.Values.Select(x =>
+            {
+                x.ClientData.Position = x.Bot.transform.position;
+                x.ClientData.Rotation = x.Bot.transform.rotation;
+                return x.ClientData;
+            }).ToArray()
+        };
+        foreach (var client in clients)
+        {
+            var peer = client.Key;
+            _netPacketProcessor.Send(peer, packet, DeliveryMethod.Unreliable);
+        }
     }
 
     void FixedUpdate()
@@ -64,7 +79,7 @@ public class Server : MonoBehaviour, INetEventListener, INetLogger
     public void OnPeerConnected(NetPeer peer)
     {
         Debug.Log("[SERVER] We have new peer " + peer.EndPoint);
-        clients.Add(peer, new ClientData());
+        clients.Add(peer, new ServerClientData {ClientData = new ClientData()});
         //создаем робота
         var x = Random.Range(460, 60 + 460);
         var z = Random.Range(460, 60 + 460);
@@ -73,9 +88,10 @@ public class Server : MonoBehaviour, INetEventListener, INetLogger
             _bot.GoToPosition(a[0].x, a[0].y);
             _bot.Attack();";
         var name = peer.EndPoint.ToString().Replace(":", "-");
-        
+        clients[peer].ClientData.Name = name;
+
         var bot = mapController.InitializeBot(pos, code, name, new PlayerDataFieldsInfo());
-        clients[peer].bot = bot;
+        clients[peer].Bot = bot;
     }
 
     public void OnNetworkError(IPEndPoint endPoint, SocketError socketErrorCode)
@@ -123,7 +139,7 @@ public class Server : MonoBehaviour, INetEventListener, INetLogger
     public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
     {
         Debug.Log("[SERVER] peer disconnected " + peer.EndPoint + ", info: " + disconnectInfo.Reason);
-        Destroy(clients[peer].bot);
+        //Destroy(clients[peer].Bot);
         clients.Remove(peer);
     }
 

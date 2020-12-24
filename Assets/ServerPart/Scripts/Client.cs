@@ -1,13 +1,19 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using GameControl;
 using LiteNetLib;
+using LiteNetLib.Utils;
+using ServerPart.Scripts;
 using UnityEngine;
 
 public class Client : MonoBehaviour, INetEventListener
 {
     private NetManager _netClient;
+    private NetPacketProcessor _netPacketProcessor;
 
     /*[SerializeField] private GameObject _clientBall;
     [SerializeField] private GameObject _clientBallInterpolated;*/
@@ -15,6 +21,8 @@ public class Client : MonoBehaviour, INetEventListener
     [SerializeField] private string gameKey = "MyFirstGameV0";
     [SerializeField] private string serverAddress = "127.0.0.1";
     [SerializeField] private int serverPort = 5000;
+    
+    [SerializeField] private MapController mapController;
 
     private float _newBallPosX;
     private float _oldBallPosX;
@@ -26,6 +34,14 @@ public class Client : MonoBehaviour, INetEventListener
         _netClient.UnconnectedMessagesEnabled = true;
         _netClient.UpdateTime = 15;
         _netClient.Start();
+
+        _netPacketProcessor = new NetPacketProcessor();
+        _netPacketProcessor.RegisterNestedType(() => new ClientData());
+
+        _netPacketProcessor.SubscribeReusable<ClientDataPacket>(packet =>
+        {
+            mapController.ApplyBots(packet.ClientData);
+        });
     }
 
     void Update()
@@ -45,7 +61,8 @@ public class Client : MonoBehaviour, INetEventListener
         }
         else
         {
-            _netClient.SendUnconnectedMessage(new byte[] {1}, new IPEndPoint(IPAddress.Parse(serverAddress), serverPort));
+            _netClient.SendUnconnectedMessage(new byte[] {1},
+                new IPEndPoint(IPAddress.Parse(serverAddress), serverPort));
             _netClient.Connect(serverAddress, serverPort, gameKey);
             //_netClient.SendBroadcast(new byte[] {1}, 5000);
         }
@@ -69,6 +86,7 @@ public class Client : MonoBehaviour, INetEventListener
 
     public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
     {
+        _netPacketProcessor.ReadPacket(reader);
         /*_newBallPosX = reader.GetFloat();
 
         var pos = _clientBall.transform.position;
@@ -81,9 +99,11 @@ public class Client : MonoBehaviour, INetEventListener
         _lerpTime = 0f;*/
     }
 
-    public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
+    public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader,
+        UnconnectedMessageType messageType)
     {
-        if (messageType == UnconnectedMessageType.BasicMessage && _netClient.ConnectedPeersCount == 0 && reader.GetInt() == 1)
+        if (messageType == UnconnectedMessageType.BasicMessage && _netClient.ConnectedPeersCount == 0 &&
+            reader.GetInt() == 1)
         {
             Debug.Log("[CLIENT] Received discovery response. Connecting to: " + remoteEndPoint);
             _netClient.Connect(remoteEndPoint, gameKey);
@@ -92,12 +112,10 @@ public class Client : MonoBehaviour, INetEventListener
 
     public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
     {
-
     }
 
     public void OnConnectionRequest(ConnectionRequest request)
     {
-        
     }
 
     public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
