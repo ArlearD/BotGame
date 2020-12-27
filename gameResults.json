@@ -172,3 +172,15 @@
 {"code":"//a","IsWinner":"1","HaveArmor":"1","HaveWeapon":"1","HaveBoots":"0"}
 {"code":"//a","IsWinner":"1","HaveArmor":"1","HaveWeapon":"1","HaveBoots":"0"}
 {"code":"//b","IsWinner":"1","HaveArmor":"0","HaveWeapon":"0","HaveBoots":"1"}
+{"code":"//a","IsWinner":"1","HaveArmor":"1","HaveWeapon":"0","HaveBoots":"0"}
+{"code":"//a","IsWinner":"1","HaveArmor":"0","HaveWeapon":"0","HaveBoots":"0"}
+{"code":"//a","IsWinner":"1","HaveArmor":"0","HaveWeapon":"0","HaveBoots":"0"}
+{"code":"//a","IsWinner":"1","HaveArmor":"0","HaveWeapon":"0","HaveBoots":"0"}
+{"code":"//.","IsWinner":"1","HaveArmor":"0","HaveWeapon":"0","HaveBoots":"1"}
+{"code":"//","IsWinner":"1","HaveArmor":"0","HaveWeapon":"0","HaveBoots":"0"}
+{"code":"//","IsWinner":"1","HaveArmor":"0","HaveWeapon":"0","HaveBoots":"0"}
+{"code":"//","IsWinner":"1","HaveArmor":"0","HaveWeapon":"0","HaveBoots":"0"}
+{"code":"run","IsWinner":"1","HaveArmor":"0","HaveWeapon":"0","HaveBoots":"1"}
+{"code":"attack","IsWinner":"1","HaveArmor":"0","HaveWeapon":"0","HaveBoots":"0"}
+{"code":"//","IsWinner":"1","HaveArmor":"0","HaveWeapon":"0","HaveBoots":"0"}
+{"code":"//","IsWinner":"1","HaveArmor":"0","HaveWeapon":"0","HaveBoots":"0"}

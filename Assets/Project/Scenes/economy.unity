@@ -1326,7 +1326,7 @@ GameObject:
   - component: {fileID: 431932022}
   - component: {fileID: 431932021}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Mid Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5570,7 +5570,7 @@ GameObject:
   - component: {fileID: 1057221844}
   - component: {fileID: 1057221843}
   m_Layer: 5
-  m_Name: Image
+  m_Name: CardGrid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
